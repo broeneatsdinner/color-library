@@ -256,12 +256,12 @@ function setBackdrop(hex, mode) {
 
 function selectBackdrop(hex) {
 	if (activeBackdropHex !== hex) {
-		setBackdrop(hex, "full");
+		setBackdrop(hex, "muted");
 		return;
 	}
 
-	if (document.body.classList.contains("backdrop-full")) {
-		setBackdrop(hex, "muted");
+	if (document.body.classList.contains("backdrop-muted")) {
+		setBackdrop(hex, "full");
 		return;
 	}
 
