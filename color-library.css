@@ -37,7 +37,25 @@ body::before {
 	mask-image: linear-gradient(to bottom, black, transparent 70%);
 }
 
+body::after {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background-color: var(--selected-color, transparent);
+	mix-blend-mode: screen;
+	content: "";
+	opacity: 0;
+	transition: background-color 700ms ease, opacity 450ms ease;
+}
+
+body.row-color-selected::after {
+	opacity: 0.24;
+}
+
 .page-shell {
+	position: relative;
+	z-index: 1;
 	width: min(1120px, calc(100% - 40px));
 	margin: 0 auto;
 	padding: 72px 0 48px;

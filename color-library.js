@@ -244,4 +244,13 @@ table?.querySelectorAll("[data-sort]").forEach((button) => {
 	button.addEventListener("click", () => sortRows(button.dataset.sort));
 });
 
+body?.addEventListener("click", (event) => {
+	const row = event.target.closest("tr");
+	if (!row || !body.contains(row)) return;
+
+	const hex = row.cells[4].textContent.trim();
+	document.body.style.setProperty("--selected-color", hex);
+	document.body.classList.add("row-color-selected");
+});
+
 if (body) attachClassifications();
