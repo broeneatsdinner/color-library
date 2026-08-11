@@ -43,13 +43,17 @@ body::after {
 	z-index: 0;
 	pointer-events: none;
 	background-color: var(--selected-color, transparent);
-	mix-blend-mode: screen;
 	content: "";
 	opacity: 0;
 	transition: background-color 700ms ease, opacity 450ms ease;
 }
 
-body.row-color-selected::after {
+body.backdrop-full::after {
+	opacity: 1;
+}
+
+body.backdrop-muted::after {
+	mix-blend-mode: screen;
 	opacity: 0.24;
 }
 
@@ -140,7 +144,7 @@ h2 {
 }
 
 .table-wrap {
-	overflow: visible;
+	overflow: clip;
 	border: 1px solid var(--line);
 	border-radius: 22px;
 	background: var(--panel);

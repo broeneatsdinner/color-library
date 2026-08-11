@@ -7,6 +7,8 @@ const state = {
 	direction: "ascending",
 };
 
+let activeBackdropHex = null;
+
 const assessmentCopy = {
 	accuracy: [
 		"Emotionally exact",
@@ -240,6 +242,32 @@ function sortRows(key) {
 	});
 }
 
+function clearBackdrop() {
+	activeBackdropHex = null;
+	document.body.classList.remove("backdrop-full", "backdrop-muted");
+}
+
+function setBackdrop(hex, mode) {
+	activeBackdropHex = hex;
+	document.body.style.setProperty("--selected-color", hex);
+	document.body.classList.remove("backdrop-full", "backdrop-muted");
+	document.body.classList.add(`backdrop-${mode}`);
+}
+
+function selectBackdrop(hex) {
+	if (activeBackdropHex !== hex) {
+		setBackdrop(hex, "full");
+		return;
+	}
+
+	if (document.body.classList.contains("backdrop-full")) {
+		setBackdrop(hex, "muted");
+		return;
+	}
+
+	clearBackdrop();
+}
+
 table?.querySelectorAll("[data-sort]").forEach((button) => {
 	button.addEventListener("click", () => sortRows(button.dataset.sort));
 });
@@ -248,9 +276,11 @@ body?.addEventListener("click", (event) => {
 	const row = event.target.closest("tr");
 	if (!row || !body.contains(row)) return;
 
-	const hex = row.cells[4].textContent.trim();
-	document.body.style.setProperty("--selected-color", hex);
-	document.body.classList.add("row-color-selected");
+	selectBackdrop(row.cells[4].textContent.trim());
+});
+
+document.addEventListener("keydown", (event) => {
+	if (event.key === "Escape") clearBackdrop();
 });
 
 if (body) attachClassifications();
