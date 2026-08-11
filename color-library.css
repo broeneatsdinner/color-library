@@ -122,7 +122,7 @@ h2 {
 }
 
 .table-wrap {
-	overflow-x: auto;
+	overflow: visible;
 	border: 1px solid var(--line);
 	border-radius: 22px;
 	background: var(--panel);
@@ -145,7 +145,12 @@ td {
 }
 
 th {
+	position: sticky;
+	top: 0;
+	z-index: 3;
 	color: var(--faint);
+	background: rgba(21, 25, 36, 0.98);
+	box-shadow: 0 1px 0 var(--line);
 	font-family: "DM Mono", monospace;
 	font-size: 0.68rem;
 	font-weight: 500;
@@ -215,9 +220,81 @@ td:first-child {
 }
 
 td:nth-child(2) {
+	position: relative;
 	width: 42%;
 	color: var(--ink);
 	font-weight: 600;
+}
+
+td:nth-child(2) .color-assessment {
+	position: absolute;
+	top: -18px;
+	left: 20ch;
+	z-index: 4;
+	box-sizing: border-box;
+	display: block;
+	width: max-content;
+	min-width: 520px;
+	min-height: 152px;
+	padding: 12px 14px;
+	border: 1px solid rgba(158, 180, 213, 0.32);
+	border-radius: 11px;
+	color: #dce7fb;
+	background: linear-gradient(135deg, #1b2436, #151b28);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.38);
+	font-family: "DM Mono", monospace;
+	font-size: 0.67rem;
+	font-weight: 500;
+	letter-spacing: 0.045em;
+	line-height: 1.7;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(-8px) scale(0.76);
+	transform-origin: left center;
+	transition: opacity 100ms ease, transform 140ms ease-in;
+	white-space: nowrap;
+}
+
+td:nth-child(2) .color-assessment span {
+	display: block;
+}
+
+td:nth-child(2) .color-assessment strong {
+	color: var(--assessment-color);
+	font-weight: 700;
+}
+
+tbody tr:hover td:nth-child(2) .color-assessment {
+	opacity: 1;
+	transform: translateY(0) scale(1);
+	animation: bubblegum-pop 230ms cubic-bezier(0.87, 0, 0.13, 1) both;
+}
+
+@keyframes bubblegum-pop {
+	0% {
+		opacity: 0;
+		transform: translateY(-8px) scale(0.76);
+	}
+
+	58% {
+		opacity: 1;
+		transform: translateY(1px) scale(1.065);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	td:nth-child(2) .color-assessment {
+		transition: none;
+	}
+
+	tbody tr:hover td:nth-child(2) .color-assessment {
+		animation: none;
+	}
 }
 
 th:nth-child(4),
