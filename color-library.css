@@ -153,6 +153,46 @@ th {
 	text-transform: uppercase;
 }
 
+.sort-button {
+	appearance: none;
+	border: 0;
+	padding: 0;
+	color: inherit;
+	background: transparent;
+	font: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+.sort-button:hover,
+.sort-button:focus-visible {
+	color: var(--ink);
+}
+
+.sort-button:focus-visible {
+	outline: 2px solid #9eb4d5;
+	outline-offset: 4px;
+	border-radius: 2px;
+}
+
+.sort-indicator::after {
+	content: "↕";
+	margin-left: 0.35rem;
+	color: var(--faint);
+}
+
+[aria-sort="ascending"] .sort-indicator::after {
+	content: "↑";
+	color: #9eb4d5;
+}
+
+[aria-sort="descending"] .sort-indicator::after {
+	content: "↓";
+	color: #9eb4d5;
+}
+
 tbody tr {
 	transition: background-color 160ms ease;
 }
