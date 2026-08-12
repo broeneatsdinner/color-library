@@ -274,6 +274,30 @@ function compareValues(first, second) {
 	return first.localeCompare(second);
 }
 
+function refreshSortHeaders(activeColorMode = null) {
+	headers.forEach((header) => {
+		const button = header.querySelector("[data-sort]");
+		const isActive = button?.dataset.sort === state.key;
+
+		header.setAttribute(
+			"aria-sort",
+			isActive
+				? activeColorMode?.ariaSort ?? state.direction
+				: "none",
+		);
+
+		if (!button) return;
+
+		if (isActive && activeColorMode) {
+			button.dataset.sortMode = activeColorMode.id;
+			button.setAttribute("aria-label", activeColorMode.label);
+		} else {
+			delete button.dataset.sortMode;
+			button.removeAttribute("aria-label");
+		}
+	});
+}
+
 function sortRows(key) {
 	let colorMode = null;
 	let activeColorMode = null;
@@ -305,27 +329,7 @@ function sortRows(key) {
 		})
 		.forEach(({ row }) => body.append(row));
 
-	headers.forEach((header) => {
-		const button = header.querySelector("[data-sort]");
-		const isActive = button?.dataset.sort === key;
-
-		header.setAttribute(
-			"aria-sort",
-			isActive
-				? activeColorMode?.ariaSort ?? state.direction
-				: "none",
-		);
-
-		if (!button) return;
-
-		if (isActive && activeColorMode) {
-			button.dataset.sortMode = activeColorMode.id;
-			button.setAttribute("aria-label", activeColorMode.label);
-		} else {
-			delete button.dataset.sortMode;
-			button.removeAttribute("aria-label");
-		}
-	});
+	refreshSortHeaders(activeColorMode);
 }
 
 function clearBackdrop() {
@@ -358,7 +362,149 @@ table?.querySelectorAll("[data-sort]").forEach((button) => {
 	button.addEventListener("click", () => sortRows(button.dataset.sort));
 });
 
+let draggedRow = null;
+let dragPointerId = null;
+let dragStart = null;
+let dragMoved = false;
+let suppressNextClick = false;
+
+function clearTextSelection() {
+	document.getSelection()?.removeAllRanges();
+}
+
+function rememberManualOrder() {
+	[...body.rows].forEach((row, index) => originalRowIndex.set(row, index));
+
+	state.key = "color";
+	state.colorModeIndex = colorModes.findIndex(({ id }) => id === "creation");
+	state.direction = "ascending";
+	refreshSortHeaders(colorModes[state.colorModeIndex]);
+}
+
+function settleDraggedRow() {
+	if (!draggedRow) return;
+
+	const row = draggedRow;
+	row.classList.remove("row-dragging");
+	row.classList.add("row-settle");
+	row.addEventListener(
+		"animationend",
+		() => row.classList.remove("row-settle"),
+		{ once: true },
+	);
+
+	draggedRow = null;
+	dragPointerId = null;
+	dragStart = null;
+	dragMoved = false;
+	document.body.classList.remove("reordering");
+}
+
+function animateRowsIntoPlace(previousPositions) {
+	[...body.rows].forEach((row) => {
+		if (row === draggedRow) return;
+
+		const previous = previousPositions.get(row);
+		const current = row.getBoundingClientRect();
+		const offset = previous ? previous.top - current.top : 0;
+
+		if (Math.abs(offset) < 1) return;
+
+		row.animate(
+			[
+				{ transform: `translateY(${offset}px)` },
+				{ transform: "translateY(0)" },
+			],
+			{
+				duration: 180,
+				easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+			},
+		);
+	});
+}
+
+function moveDraggedRow(event) {
+	const target = document.elementFromPoint(event.clientX, event.clientY)?.closest("tr");
+	if (!target || target === draggedRow || !body.contains(target)) return;
+
+	const previousPositions = new Map(
+		[...body.rows].map((row) => [row, row.getBoundingClientRect()]),
+	);
+	const midpoint = target.getBoundingClientRect().top
+		+ (target.getBoundingClientRect().height / 2);
+
+	body.insertBefore(
+		draggedRow,
+		event.clientY < midpoint ? target : target.nextElementSibling,
+	);
+	animateRowsIntoPlace(previousPositions);
+}
+
+body?.addEventListener("pointerdown", (event) => {
+	if (event.button !== 0) return;
+
+	const row = event.target.closest("tr");
+	if (!row || !body.contains(row)) return;
+
+	draggedRow = row;
+	dragPointerId = event.pointerId;
+	dragStart = { x: event.clientX, y: event.clientY };
+	dragMoved = false;
+	row.setPointerCapture(event.pointerId);
+});
+
+body?.addEventListener("pointermove", (event) => {
+	if (event.pointerId !== dragPointerId || !draggedRow || !dragStart) return;
+
+	const distance = Math.hypot(
+		event.clientX - dragStart.x,
+		event.clientY - dragStart.y,
+	);
+
+	if (!dragMoved && distance < 6) return;
+
+	if (!dragMoved) {
+		dragMoved = true;
+		clearTextSelection();
+		draggedRow.classList.add("row-dragging");
+		document.body.classList.add("reordering");
+	}
+
+	event.preventDefault();
+	moveDraggedRow(event);
+});
+
+body?.addEventListener("pointerup", (event) => {
+	if (event.pointerId !== dragPointerId || !draggedRow) return;
+
+	if (dragMoved) {
+		rememberManualOrder();
+		suppressNextClick = true;
+	}
+	if (draggedRow.hasPointerCapture(event.pointerId)) {
+		draggedRow.releasePointerCapture(event.pointerId);
+	}
+	settleDraggedRow();
+});
+
+body?.addEventListener("pointercancel", settleDraggedRow);
+
+body?.addEventListener("selectstart", (event) => {
+	if (!dragMoved) return;
+
+	event.preventDefault();
+});
+
+document.addEventListener("selectionchange", () => {
+	if (dragMoved) clearTextSelection();
+});
+
 body?.addEventListener("click", (event) => {
+	if (suppressNextClick) {
+		suppressNextClick = false;
+		return;
+	}
+
 	const row = event.target.closest("tr");
 	if (!row || !body.contains(row)) return;
 
