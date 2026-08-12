@@ -205,6 +205,10 @@ th {
 }
 
 .sort-indicator::after {
+	position: relative;
+	top: -1px;
+	display: inline-block;
+	font-size: calc(1em + 1px);
 	content: "↕";
 	margin-left: 0.35rem;
 	color: var(--faint);
