@@ -763,3 +763,23 @@ entry
 	but: the lamp is now on your side
 	funeral: Keep this one out of the church
 	wedding: Throw it instead of rice
+
+entry
+	you-said: humans are the primary editors
+	interpretation: Kindly proofreader green
+	short-name: hatpe
+	hex: #A6C96A
+	accuracy: Emotionally version-controlled
+	but: the margin notes are glowing with restraint
+	funeral: Appropriate if someone loved a red pen
+	wedding: Excellent for correcting the seating chart gently
+
+entry
+	you-said: specimen drawer
+	interpretation: Catalog-card walnut
+	short-name: sd
+	hex: #8B7355
+	accuracy: Labeled by a very small brass handle
+	but: the archive coughed politely and opened
+	funeral: Suitable for storing one beautiful button
+	wedding: Best near the guest book, under supervision
