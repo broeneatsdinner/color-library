@@ -175,11 +175,12 @@ h2 {
 }
 
 .field-grid {
-	--field-gap: 12px;
-	--field-dot-size: 28px;
+	--field-gap: clamp(12px, 1.5vw, 18px);
+	--field-dot-size: clamp(56px, 7vw, 84px);
 	display: flex;
 	flex-direction: column;
 	gap: var(--field-gap);
+	isolation: isolate;
 }
 
 .field-row {
@@ -191,21 +192,27 @@ h2 {
 .field-dot {
 	width: var(--field-dot-size);
 	height: var(--field-dot-size);
-	border: 1px solid rgba(255, 255, 255, 0.25);
+	border: 0;
 	border-radius: 50%;
 	background: var(--color);
-	box-shadow: inset 0 1px rgba(255, 255, 255, 0.34), 0 8px 22px color-mix(in srgb, var(--color), transparent 72%);
+	box-shadow: 0 10px 28px color-mix(in srgb, var(--color), transparent 72%);
 	cursor: pointer;
+	mix-blend-mode: multiply;
 	transform: translate3d(var(--field-x, 0px), var(--field-y, 0px), 0) scale(var(--field-scale, 1));
-	transition: transform 200ms ease, box-shadow 200ms ease;
+	transition: transform 260ms cubic-bezier(0.2, 1.45, 0.34, 1), box-shadow 200ms ease;
 	will-change: transform;
+}
+
+.field-dot[data-pulled="true"] {
+	transition-duration: 420ms, 200ms;
+	transition-timing-function: cubic-bezier(0.16, 1.8, 0.28, 1), ease;
 }
 
 .field-dot:hover,
 .field-dot:focus-visible {
 	z-index: 1;
 	--field-scale: 1.3;
-	box-shadow: inset 0 1px rgba(255, 255, 255, 0.45), 0 0 30px color-mix(in srgb, var(--color), transparent 35%);
+	box-shadow: 0 0 34px color-mix(in srgb, var(--color), transparent 35%);
 }
 
 .field-dot:focus-visible {
@@ -684,8 +691,8 @@ footer p {
 	}
 
 	.field-grid {
-		--field-gap: 9px;
-		--field-dot-size: 24px;
+		--field-gap: 8px;
+		--field-dot-size: clamp(26px, 8vw, 38px);
 	}
 
 	.swatch-card {

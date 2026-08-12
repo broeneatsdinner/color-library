@@ -440,7 +440,7 @@ function refreshSwatchGrid() {
 	);
 }
 
-const fieldPullDistance = 70;
+const fieldPullDistance = 210;
 const fieldBurstDuration = 2200;
 const fieldBurstStagger = 300;
 let fieldBurstActive = false;
