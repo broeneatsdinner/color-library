@@ -100,7 +100,7 @@ body.backdrop-muted::after {
 	height: 100%;
 	opacity: 0;
 	mix-blend-mode: screen;
-	transform: translate3d(-2.5vw, -1%, 0);
+	transform: translate3d(-1.6vw, -0.8%, 0);
 	transform-origin: center left;
 	will-change: opacity, transform;
 }

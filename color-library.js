@@ -75,13 +75,16 @@ function playHeroWave() {
 	}
 
 	const paths = [...heroWave.children].filter((child) => child.tagName.toLowerCase() === "path");
+	const defs = heroWave.querySelector("defs");
+	const xmlns = "http://www.w3.org/2000/svg";
+	const waveId = `hero-wave-ltr-${Date.now()}`;
 	const animations = [
 		heroWave.animate(
 			[
-				{ opacity: 0, transform: "translate3d(-2.5vw, -1%, 0)" },
-				{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.12 },
+				{ opacity: 0, transform: "translate3d(-1.6vw, -0.8%, 0)" },
+				{ opacity: 1, transform: "translate3d(-0.6vw, -0.2%, 0)", offset: 0.14 },
 				{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.78 },
-				{ opacity: 0, transform: "translate3d(1vw, 0.5%, 0)" },
+				{ opacity: 0, transform: "translate3d(0.8vw, 0.4%, 0)" },
 			],
 			{
 				duration: 6200,
@@ -92,21 +95,50 @@ function playHeroWave() {
 	];
 
 	paths.forEach((path, index) => {
+		const box = path.getBBox();
+		const clip = document.createElementNS(xmlns, "clipPath");
+		const rect = document.createElementNS(xmlns, "rect");
 		const lineOpacity = 0.7 + (index % 4) * 0.1;
-		const delay = index * 38;
+		const rowStagger = index * 26;
+		const crossCurrent = ((index * 17) % 9) * 72;
+		const delay = rowStagger + crossCurrent;
+		const duration = 2400 + ((index * 19) % 7) * 280;
 
+		clip.setAttribute("id", `${waveId}-${index}`);
+		rect.setAttribute("x", box.x - 16);
+		rect.setAttribute("y", box.y - 16);
+		rect.setAttribute("width", 0);
+		rect.setAttribute("height", box.height + 32);
+		clip.append(rect);
+		defs.append(clip);
+		path.setAttribute("clip-path", `url(#${waveId}-${index})`);
 		path.style.opacity = 0;
+
+		animations.push(
+			rect.animate(
+				[
+					{ width: 0 },
+					{ width: box.width + 32 },
+				],
+				{
+					delay,
+					duration,
+					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+					fill: "forwards",
+				},
+			),
+		);
 
 		animations.push(
 			path.animate(
 				[
 					{ opacity: 0 },
-					{ opacity: lineOpacity, offset: 0.28 },
+					{ opacity: lineOpacity, offset: 0.18 },
 					{ opacity: lineOpacity },
 				],
 				{
 					delay,
-					duration: 1600,
+					duration: 900,
 					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
 					fill: "forwards",
 				},
@@ -122,7 +154,7 @@ function playHeroWave() {
 					],
 					{
 						delay,
-						duration: 4200,
+						duration: duration + 800,
 						easing: "cubic-bezier(0.22, 1, 0.36, 1)",
 						fill: "forwards",
 					},
