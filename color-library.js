@@ -58,7 +58,9 @@ let swatchBreathFrame = null;
 let swatchBreathPower = 0;
 let swatchTouchY = null;
 let swatchBreathScrollY = window.scrollY;
-let swatchIgnoreScrollUntil = 0;
+let swatchBreathRows = [];
+const swatchBreathDirection = 1;
+const swatchBreathMaxSpacing = 58;
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -510,6 +512,7 @@ function contrastColor(hex) {
 
 function refreshSwatchGrid() {
 	if (!body || !swatchGrid) return;
+	swatchBreathRows = [];
 
 	swatchGrid.replaceChildren(
 		...[...body.rows].map((row) => {
@@ -535,12 +538,30 @@ function refreshSwatchGrid() {
 	requestSwatchBreathingUpdate();
 }
 
+function measureSwatchRows() {
+	if (!swatchGrid || swatchGrid.hidden) {
+		swatchBreathRows = [];
+		return;
+	}
+
+	const rowMap = new Map();
+	swatchGrid.querySelectorAll(".swatch-card").forEach((card) => {
+		const rect = card.getBoundingClientRect();
+		const key = Math.round(rect.top);
+		if (!rowMap.has(key)) rowMap.set(key, { top: rect.top, cards: [] });
+		rowMap.get(key).cards.push(card);
+	});
+
+	swatchBreathRows = [...rowMap.values()].sort((first, second) => first.top - second.top);
+}
+
 function resetSwatchBreathing() {
 	if (!swatchGrid) return;
 	swatchBreathPower = 0;
-	swatchGrid.style.removeProperty("--swatch-row-gap");
+	swatchGrid.querySelectorAll(".swatch-card").forEach((card) => {
+		card.style.removeProperty("--swatch-breath-y");
+	});
 	swatchBreathScrollY = window.scrollY;
-	swatchIgnoreScrollUntil = 0;
 }
 
 function updateSwatchBreathing() {
@@ -562,11 +583,17 @@ function updateSwatchBreathing() {
 		return;
 	}
 
+	if (!swatchBreathRows.length) measureSwatchRows();
 	const easedPower = swatchBreathPower * swatchBreathPower * (3 - (2 * swatchBreathPower));
-	const maxExtraGap = Math.min(96, Math.max(44, window.innerHeight * 0.1));
-	const rowGap = 12 + (easedPower * maxExtraGap);
-	swatchGrid.style.setProperty("--swatch-row-gap", `${rowGap.toFixed(2)}px`);
-	swatchIgnoreScrollUntil = performance.now() + 220;
+	const spacing = easedPower * swatchBreathDirection * swatchBreathMaxSpacing;
+	const midpoint = (swatchBreathRows.length - 1) / 2;
+
+	swatchBreathRows.forEach((row, index) => {
+		const y = (index - midpoint) * spacing;
+		row.cards.forEach((card) => {
+			card.style.setProperty("--swatch-breath-y", `${y.toFixed(2)}px`);
+		});
+	});
 
 	requestSwatchBreathingUpdate();
 }
@@ -586,7 +613,6 @@ function addSwatchBreathFromScroll() {
 	const currentY = window.scrollY;
 	const delta = currentY - swatchBreathScrollY;
 	swatchBreathScrollY = currentY;
-	if (performance.now() < swatchIgnoreScrollUntil) return;
 	addSwatchBreath(Math.min(Math.abs(delta) / 900, 0.32));
 }
 
@@ -782,7 +808,10 @@ function setView(view) {
 	if (colorField) colorField.hidden = !showField;
 	// Each library mode is its own destination: switch modes from the top.
 	window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-	if (showSwatches) resetSwatchBreathing();
+	if (showSwatches) {
+		resetSwatchBreathing();
+		requestAnimationFrame(measureSwatchRows);
+	}
 
 	viewButtons.forEach((button) => {
 		const isActive = button.dataset.view === view;
@@ -791,7 +820,7 @@ function setView(view) {
 	});
 
 	requestAnimationFrame(updateViewToggleState);
-	requestSwatchBreathingUpdate();
+	if (showSwatches) requestSwatchBreathingUpdate();
 }
 
 function updateViewToggleState() {
@@ -901,6 +930,7 @@ window.addEventListener("scroll", () => {
 window.addEventListener("resize", () => {
 	updateViewToggleState();
 	resetSwatchBreathing();
+	if (activeView === "swatches") requestAnimationFrame(measureSwatchRows);
 });
 window.addEventListener("wheel", (event) => {
 	addSwatchBreath(Math.min(Math.abs(event.deltaY) / 900, 0.32));

@@ -189,14 +189,10 @@ h2 {
 }
 
 .swatch-grid {
-	--swatch-row-gap: 12px;
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-	column-gap: 12px;
-	row-gap: var(--swatch-row-gap);
+	gap: 12px;
 	padding-block: clamp(24px, 5vw, 64px);
-	transition: row-gap 180ms cubic-bezier(0.22, 1, 0.36, 1);
-	will-change: row-gap;
 }
 
 .swatch-grid[hidden] {
@@ -274,6 +270,7 @@ h2 {
 
 .swatch-card {
 	position: relative;
+	--swatch-breath-y: 0px;
 	--swatch-hover-y: 0px;
 	--swatch-hover-rotate: 0deg;
 	min-height: 210px;
@@ -287,8 +284,9 @@ h2 {
 	font: inherit;
 	text-align: left;
 	cursor: pointer;
-	transform: translateY(var(--swatch-hover-y)) rotate(var(--swatch-hover-rotate));
+	transform: translate3d(0, calc(var(--swatch-breath-y) + var(--swatch-hover-y)), 0) rotate(var(--swatch-hover-rotate));
 	transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
+	will-change: transform;
 }
 
 .swatch-card::after {
