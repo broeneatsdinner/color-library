@@ -1,6 +1,9 @@
 const table = document.querySelector("table");
 const body = table?.querySelector("tbody");
 const headers = [...(table?.querySelectorAll("th") ?? [])];
+const tableWrap = document.querySelector(".table-wrap");
+const swatchGrid = document.querySelector(".swatch-grid");
+const viewButtons = [...document.querySelectorAll("[data-view]")];
 
 const state = {
 	key: null,
@@ -317,6 +320,57 @@ function refreshLightLabel(activeColorMode) {
 	if (label && activeColorMode) label.textContent = activeColorMode.headerLabel;
 }
 
+function contrastColor(hex) {
+	const channels = hex.match(/[A-Fa-f0-9]{2}/g)?.map((channel) => Number.parseInt(channel, 16));
+	if (!channels) return "#111722";
+	const [red, green, blue] = channels.map((channel) => {
+		const value = channel / 255;
+		return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+	});
+	return (0.2126 * red) + (0.7152 * green) + (0.0722 * blue) > 0.36
+		? "#111722"
+		: "#f7f9ff";
+}
+
+function refreshSwatchGrid() {
+	if (!body || !swatchGrid) return;
+
+	swatchGrid.replaceChildren(
+		...[...body.rows].map((row) => {
+			const cells = row.cells;
+			const hex = cells[4].textContent.trim();
+			const phrase = cells[1].querySelector("code")?.textContent.trim() ?? "";
+			const card = document.createElement("button");
+			card.type = "button";
+			card.className = "swatch-card";
+			card.style.setProperty("--color", hex);
+			card.style.setProperty("--card-ink", contrastColor(hex));
+			card.setAttribute("aria-label", `${phrase}, ${hex}`);
+			card.innerHTML = `
+				<span class="swatch-card__shortname">${cells[3].textContent.trim()}</span>
+				<span class="swatch-card__hex">${hex}</span>
+				<span class="swatch-card__phrase">${phrase}</span>
+				<span class="swatch-card__interpretation">${cells[2].textContent.trim()}</span>
+			`;
+			card.addEventListener("click", () => selectBackdrop(hex));
+			return card;
+		}),
+	);
+}
+
+function setView(view) {
+	const showSwatches = view === "swatches";
+	if (showSwatches) refreshSwatchGrid();
+	if (tableWrap) tableWrap.hidden = showSwatches;
+	if (swatchGrid) swatchGrid.hidden = !showSwatches;
+
+	viewButtons.forEach((button) => {
+		const isActive = button.dataset.view === view;
+		button.classList.toggle("is-active", isActive);
+		button.setAttribute("aria-pressed", String(isActive));
+	});
+}
+
 function sortRows(key) {
 	let colorMode = null;
 	let activeColorMode = null;
@@ -350,6 +404,7 @@ function sortRows(key) {
 
 	refreshSortHeaders(activeColorMode);
 	if (activeColorMode) refreshLightLabel(activeColorMode);
+	refreshSwatchGrid();
 }
 
 function clearBackdrop() {
@@ -382,6 +437,10 @@ table?.querySelectorAll("[data-sort]").forEach((button) => {
 	button.addEventListener("click", () => sortRows(button.dataset.sort));
 });
 
+viewButtons.forEach((button) => {
+	button.addEventListener("click", () => setView(button.dataset.view));
+});
+
 let draggedRow = null;
 let dragPointerId = null;
 let dragStart = null;
@@ -400,6 +459,7 @@ function rememberManualOrder() {
 	state.direction = "ascending";
 	refreshSortHeaders(colorModes[state.colorModeIndex]);
 	refreshLightLabel(colorModes[state.colorModeIndex]);
+	refreshSwatchGrid();
 }
 
 function settleDraggedRow() {
@@ -536,4 +596,7 @@ document.addEventListener("keydown", (event) => {
 	if (event.key === "Escape") clearBackdrop();
 });
 
-if (body) attachClassifications();
+if (body) {
+	attachClassifications();
+	refreshSwatchGrid();
+}

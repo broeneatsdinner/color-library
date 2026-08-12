@@ -152,6 +152,134 @@ h2 {
 	backdrop-filter: blur(16px);
 }
 
+.swatch-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 12px;
+}
+
+.swatch-grid[hidden] {
+	display: none;
+}
+
+.swatch-card {
+	position: relative;
+	min-height: 210px;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--color), white 24%);
+	border-radius: 18px;
+	padding: 18px;
+	color: var(--card-ink);
+	background: var(--color);
+	box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), 0 14px 26px color-mix(in srgb, var(--color), transparent 70%);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
+}
+
+.swatch-card::after {
+	position: absolute;
+	inset: auto -20% -40% 28%;
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.16);
+	content: "";
+	transform: rotate(-18deg);
+}
+
+.swatch-card:hover,
+.swatch-card:focus-visible {
+	z-index: 1;
+	box-shadow: inset 0 1px rgba(255, 255, 255, 0.3), 0 20px 34px color-mix(in srgb, var(--color), transparent 55%);
+	transform: translateY(-5px) rotate(-0.5deg);
+}
+
+.swatch-card:focus-visible {
+	outline: 3px solid var(--ink);
+	outline-offset: 3px;
+}
+
+.swatch-card__shortname,
+.swatch-card__hex,
+.swatch-card__phrase,
+.swatch-card__interpretation {
+	position: relative;
+	z-index: 1;
+	display: block;
+}
+
+.swatch-card__shortname,
+.swatch-card__hex {
+	font-family: "DM Mono", monospace;
+	font-size: 0.68rem;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.swatch-card__hex {
+	margin-top: 4px;
+	opacity: 0.78;
+}
+
+.swatch-card__phrase {
+	margin-top: 42px;
+	font-family: "DM Mono", monospace;
+	font-size: 0.85rem;
+	font-weight: 500;
+	line-height: 1.38;
+}
+
+.swatch-card__interpretation {
+	margin-top: 10px;
+	font-size: 0.76rem;
+	line-height: 1.35;
+	opacity: 0.78;
+}
+
+.view-toggle {
+	display: flex;
+	width: max-content;
+	margin: 34px auto 0;
+	padding: 5px;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	background: rgba(23, 29, 43, 0.72);
+	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+	backdrop-filter: blur(16px);
+}
+
+.view-toggle-button {
+	border: 0;
+	border-radius: 999px;
+	padding: 10px 20px;
+	color: var(--muted);
+	background: transparent;
+	font-family: "DM Mono", monospace;
+	font-size: 0.72rem;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	transition: color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.view-toggle-button:hover,
+.view-toggle-button:focus-visible {
+	color: var(--ink);
+}
+
+.view-toggle-button:focus-visible {
+	outline: 2px solid #9eb4d5;
+	outline-offset: 2px;
+}
+
+.view-toggle-button.is-active {
+	color: #111722;
+	background: var(--ink);
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.24);
+}
+
 table {
 	width: 100%;
 	min-width: 780px;
@@ -436,5 +564,20 @@ footer p {
 	th,
 	td {
 		padding: 15px 16px;
+	}
+
+	.swatch-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 9px;
+	}
+
+	.swatch-card {
+		min-height: 178px;
+		padding: 14px;
+	}
+
+	.swatch-card__phrase {
+		margin-top: 30px;
+		font-size: 0.74rem;
 	}
 }
