@@ -362,7 +362,7 @@ h2 {
 	backdrop-filter: blur(16px);
 	opacity: 0;
 	pointer-events: none;
-	transform: translateX(-50%) translateY(22px) scale(0.96);
+	transform: translateX(-50%) translateY(22px) scale(0.3);
 	transform-origin: center;
 	transition:
 		bottom 700ms cubic-bezier(0.06, 0.58, 0.3, 1),
@@ -381,11 +381,49 @@ h2 {
 	transform: translateX(-50%);
 }
 
+.view-toggle.is-popping {
+	animation: view-toggle-pop 240ms cubic-bezier(0.16, 1.4, 0.32, 1) both;
+}
+
+.view-toggle.is-hiding {
+	animation: view-toggle-fade-out 260ms ease both;
+}
+
 .view-toggle.is-expanded {
 	bottom: 50%;
 	width: clamp(20rem, 75vw, 90rem);
 	height: clamp(10rem, 14vw, 15rem);
 	transform: translateX(-50%) translateY(50%);
+	animation: none;
+}
+
+@keyframes view-toggle-pop {
+	0% {
+		opacity: 0;
+		transform: translateX(-50%) translateY(22px) scale(0.3);
+	}
+
+	58% {
+		opacity: 1;
+		transform: translateX(-50%) translateY(-4px) scale(1.525);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0) scale(1);
+	}
+}
+
+@keyframes view-toggle-fade-out {
+	0% {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0) scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: translateX(-50%) translateY(22px) scale(0.3);
+	}
 }
 
 .view-toggle-button {
@@ -433,6 +471,7 @@ h2 {
 
 @media (prefers-reduced-motion: reduce) {
 	.view-toggle {
+		animation: none;
 		transform: translateX(-50%);
 		transition: none;
 	}

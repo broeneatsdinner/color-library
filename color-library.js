@@ -51,6 +51,8 @@ const colorModes = [
 ];
 
 let activeBackdropHex = null;
+let viewToggleShown = false;
+let viewToggleHideTimer = null;
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -730,7 +732,29 @@ function setView(view) {
 function updateViewToggleState() {
 	if (!viewToggle) return;
 	const remaining = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
-	viewToggle.classList.toggle("is-visible", window.scrollY > window.innerHeight * 0.4);
+	const shouldShow = window.scrollY > window.innerHeight * 0.4;
+
+	if (shouldShow && !viewToggleShown) {
+		window.clearTimeout(viewToggleHideTimer);
+		viewToggle.classList.remove("is-hiding", "is-popping");
+		viewToggle.classList.add("is-visible");
+		requestAnimationFrame(() => {
+			if (!reducedMotionQuery.matches) viewToggle.classList.add("is-popping");
+		});
+	} else if (!shouldShow && viewToggleShown) {
+		viewToggle.classList.remove("is-visible");
+		viewToggle.classList.remove("is-popping");
+		window.clearTimeout(viewToggleHideTimer);
+		if (!reducedMotionQuery.matches) {
+			viewToggle.classList.add("is-hiding");
+			viewToggleHideTimer = window.setTimeout(() => {
+				viewToggle.classList.remove("is-hiding");
+			}, 280);
+		} else {
+			viewToggle.classList.remove("is-hiding");
+		}
+	}
+	viewToggleShown = shouldShow;
 	viewToggle.classList.toggle("is-expanded", remaining < 160);
 }
 
