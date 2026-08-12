@@ -63,6 +63,9 @@ let swatchBreathRows = [];
 const swatchBreathDirection = 1;
 const swatchBreathMaxSpacing = 52;
 const swatchBreathLensFloor = 0.42;
+const swatchBreathMinDuration = 360;
+const swatchBreathMidDuration = 720;
+const swatchBreathMaxDuration = 1080;
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -562,6 +565,7 @@ function resetSwatchBreathing() {
 	swatchBreathPower = 0;
 	swatchGrid.querySelectorAll(".swatch-card").forEach((card) => {
 		card.style.removeProperty("--swatch-breath-y");
+		card.style.removeProperty("--swatch-breath-duration");
 	});
 	swatchBreathScrollY = window.scrollY;
 	swatchBreathScrollDirection = 1;
@@ -599,10 +603,15 @@ function updateSwatchBreathing() {
 		const lensProgress = Math.max(0, 1 - (distance / falloff));
 		const easedLensProgress = lensProgress * lensProgress * (3 - (2 * lensProgress));
 		const easedLens = swatchBreathLensFloor + ((1 - swatchBreathLensFloor) * easedLensProgress);
+		const edgeProgress = 1 - easedLensProgress;
+		const duration = swatchBreathMinDuration
+			+ (edgeProgress * (swatchBreathMidDuration - swatchBreathMinDuration))
+			+ (edgeProgress * edgeProgress * (swatchBreathMaxDuration - swatchBreathMidDuration));
 		const rowDistanceFromFocus = (viewportCenter - focalY) / rowStep;
 		const y = rowDistanceFromFocus * spacing * easedLens;
 		row.cards.forEach((card) => {
 			card.style.setProperty("--swatch-breath-y", `${y.toFixed(2)}px`);
+			card.style.setProperty("--swatch-breath-duration", `${duration.toFixed(0)}ms`);
 		});
 	});
 
