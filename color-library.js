@@ -66,7 +66,7 @@ function playHeroWave() {
 		heroWave.animate(
 			[
 				{ opacity: 0 },
-				{ opacity: 0.2 },
+				{ opacity: 1 },
 			],
 			{
 				duration: 500,
@@ -125,7 +125,7 @@ function playHeroWave() {
 		.then(() => {
 			heroWave.animate(
 				[
-					{ opacity: 0.2 },
+					{ opacity: 1 },
 					{ opacity: 0 },
 				],
 				{
