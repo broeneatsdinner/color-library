@@ -1,0 +1,765 @@
+# colors.library
+# A tiny custom format for a tiny strange color canon.
+#
+# entry starts a record. Indented field lines are field-name: value.
+# Values begin after the first colon-space and continue to the end of the line.
+
+entry
+	you-said: chartruese
+	interpretation: Chartreuse
+	short-name: ch
+	hex: #7FFF00
+	accuracy: Made of evidence, somehow
+	but: it possesses a minor weather system
+	funeral: High risk, unforgettable
+	wedding: For the couple who eloped emotionally
+
+entry
+	you-said: camoflauge
+	interpretation: Camouflage
+	short-name: ca
+	hex: #78866B
+	accuracy: Peer-reviewed by vibes
+	but: it has one very good story
+	funeral: Better as a private thought
+	wedding: Very, very reception
+
+entry
+	you-said: unicorn dust
+	interpretation: Soft lavender sparkle
+	short-name: ud
+	hex: #E6A8FF
+	accuracy: Not wrong, merely sideways
+	but: nobody can prove you wrong in this room
+	funeral: Technically, but with consequences
+	wedding: At a beach wedding, dangerous
+
+entry
+	you-said: halloween
+	interpretation: Pumpkin orange
+	short-name: ha
+	hex: #FF6B00
+	accuracy: Rigorous in a dream
+	but: the lamp is now on your side
+	funeral: If the casket has cup holders
+	wedding: A bold plus-one
+
+entry
+	you-said: slime bucket
+	interpretation: Sickly slime green
+	short-name: sb
+	hex: #9ACD32
+	accuracy: Factually inadmissible
+	but: the universe left the door unlocked
+	funeral: Ask the family. Then ask again.
+	wedding: A bold plus-one
+
+entry
+	you-said: old plumbing
+	interpretation: Oxidized-copper verdigris
+	short-name: op
+	hex: #4F756C
+	accuracy: Too specific to dismiss
+	but: a tiny committee agrees
+	funeral: A brave choice for the bereaved
+	wedding: For vows written on a napkin
+
+entry
+	you-said: gifted scholar
+	interpretation: Fountain-pen academic blue
+	short-name: gs
+	hex: #354B8C
+	accuracy: Not wrong, merely sideways
+	but: it looks expensive in low light
+	funeral: In a tiny pocket square only
+	wedding: At the reception with conviction
+
+entry
+	you-said: yesterday's cloud formation
+	interpretation: Faded blue-gray
+	short-name: yscf
+	hex: #9EADBA
+	accuracy: Ranked #1 in a very small field
+	but: the hex is frankly undeniable
+	funeral: In a tiny pocket square only
+	wedding: At the reception with conviction
+
+entry
+	you-said: ex-girlfriend but you'll always still love her
+	interpretation: Dusty rose, fond but bruised
+	short-name: eglas
+	hex: #B76E79
+	accuracy: Unlicensed but persuasive
+	but: the lamp is now on your side
+	funeral: If everyone signed a waiver
+	wedding: Better than another mason jar
+
+entry
+	you-said: fool's gold, but trick's on you - it turned out to be real gold
+	interpretation: Real gold
+	short-name: fsgts
+	hex: #D4AF37
+	accuracy: Rigorous in a dream
+	but: the lamp is now on your side
+	funeral: Technically, but with consequences
+	wedding: It could catch the bouquet
+
+entry
+	you-said: forgotten swimsuit
+	interpretation: Sun-faded poolside turquoise
+	short-name: fs
+	hex: #65C6C4
+	accuracy: Reliable after 9 p.m.
+	but: nobody can prove you wrong in this room
+	funeral: If the casket has cup holders
+	wedding: A bold plus-one
+
+entry
+	you-said: punk rock rollerskate
+	interpretation: Electric hot magenta
+	short-name: prr
+	hex: #FF2DAA
+	accuracy: Ranked #1 in a very small field
+	but: this is how colors get tenure
+	funeral: Ask the family. Then ask again.
+	wedding: At the reception with conviction
+
+entry
+	you-said: the beatles' imperfect morning
+	interpretation: Mellow early-morning gold
+	short-name: bim
+	hex: #D6B86B
+	accuracy: Unlicensed but persuasive
+	but: the hex is frankly undeniable
+	funeral: Absolutely not near the program
+	wedding: The bridesmaids would gossip for years
+
+entry
+	you-said: dry waterslide in autumn
+	interpretation: Weathered burnt orange
+	short-name: dwa
+	hex: #B85C38
+	accuracy: Factually inadmissible
+	but: the vibes have notarized it
+	funeral: If the casket has cup holders
+	wedding: It could catch the bouquet
+
+entry
+	you-said: narwhal sweat
+	interpretation: Deep, inky dark blue
+	short-name: ns
+	hex: #0B1F3A
+	accuracy: Disputed by one uncle
+	but: the lamp is now on your side
+	funeral: In a tiny pocket square only
+	wedding: In the photo booth, absolutely
+
+entry
+	you-said: massachusetts when it's cold at night
+	interpretation: Cold Atlantic slate blue
+	short-name: mscan
+	hex: #2C3A4F
+	accuracy: Approximately psychic
+	but: it remembers being summer
+	funeral: High risk, unforgettable
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: london train tunnel
+	interpretation: Sooty blue-black rail tunnel
+	short-name: ltt
+	hex: #262B33
+	accuracy: Disputed by one uncle
+	but: this is how colors get tenure
+	funeral: In a tiny pocket square only
+	wedding: In the photo booth, absolutely
+
+entry
+	you-said: that girl from sophomore year's cubic zirconia ring finger ring
+	interpretation: Glinty cool lavender-silver
+	short-name: gsysc
+	hex: #D8D0E8
+	accuracy: Disputed by one uncle
+	but: the swatch is taking it very seriously
+	funeral: If the casket has cup holders
+	wedding: In the photo booth, absolutely
+
+entry
+	you-said: wawa hoagie sandwich
+	interpretation: Roast-meat reddish brown
+	short-name: whs
+	hex: #9A4F2D
+	accuracy: Reliable after 9 p.m.
+	but: the argument has a satisfying crunch
+	funeral: Ask the family. Then ask again.
+	wedding: In the photo booth, absolutely
+
+entry
+	you-said: space dolphin jetpack engaged
+	interpretation: Bright jetpack cyan
+	short-name: sdje
+	hex: #27D9FF
+	accuracy: Not wrong, merely sideways
+	but: the universe left the door unlocked
+	funeral: If everyone signed a waiver
+	wedding: The bridesmaids would gossip for years
+
+entry
+	you-said: classic chesspiece at depth
+	interpretation: Deep ebony blue-black
+	short-name: ccad
+	hex: #1C2433
+	accuracy: Not wrong, merely sideways
+	but: the vibes have notarized it
+	funeral: Respectfully, no
+	wedding: Only if the cake is also this color
+
+entry
+	you-said: rug corner kicked back cool
+	interpretation: Muted, relaxed rug teal
+	short-name: rckbc
+	hex: #527F7A
+	accuracy: Factually inadmissible
+	but: nobody can prove you wrong in this room
+	funeral: Bring flowers instead
+	wedding: Throw it instead of rice
+
+entry
+	you-said: honeyed matchbooks that won't light
+	interpretation: Unlit honey amber
+	short-name: hmwtl
+	hex: #A56625
+	accuracy: Emotionally exact
+	but: a tiny committee agrees
+	funeral: Potentially iconic, definitely risky
+	wedding: Very, very reception
+
+entry
+	you-said: hard boiled hard thrown
+	interpretation: Scuffed eggshell khaki
+	short-name: hbht
+	hex: #D2C79E
+	accuracy: Foundational nonsense
+	but: it would win a debate against beige
+	funeral: Only if the deceased was hilarious
+	wedding: Front row, somehow
+
+entry
+	you-said: just under acceptable PSI
+	interpretation: Tense gauge amber
+	short-name: juap
+	hex: #C97922
+	accuracy: Approximately psychic
+	but: it remembers being summer
+	funeral: Maybe in a very good hat
+	wedding: It understands the dress code spiritually
+
+entry
+	you-said: no way that can be real
+	interpretation: Impossible showroom cyan
+	short-name: wcbr
+	hex: #7FE9FF
+	accuracy: Rigorous in a dream
+	but: this is how colors get tenure
+	funeral: Ask the family. Then ask again.
+	wedding: It could catch the bouquet
+
+entry
+	you-said: fragile doesn't translate
+	interpretation: Untranslatable handling blue
+	short-name: fdtt
+	hex: #8FA4B3
+	accuracy: Peer-reviewed by vibes
+	but: it remembers being summer
+	funeral: Only if the deceased was hilarious
+	wedding: It understands the dress code spiritually
+
+entry
+	you-said: a man, a plan, a canal, persians
+	interpretation: Palindromic canal indigo
+	short-name: mpcp
+	hex: #5C4F86
+	accuracy: Cartographically suspect
+	but: nobody can prove you wrong in this room
+	funeral: Ask the family. Then ask again.
+	wedding: At a beach wedding, dangerous
+
+entry
+	you-said: lazy eye
+	interpretation: Wandering iris hazel
+	short-name: le
+	hex: #907856
+	accuracy: Approximately psychic
+	but: it has one very good story
+	funeral: Better as a private thought
+	wedding: The DJ would approve
+
+entry
+	you-said: i wore shorts when no-one else did
+	interpretation: Cold-weather shorts optimism
+	short-name: iwsd
+	hex: #AFC7D6
+	accuracy: Reliable after 9 p.m.
+	but: it looks expensive in low light
+	funeral: Ask the family. Then ask again.
+	wedding: In the photo booth, absolutely
+
+entry
+	you-said: golf course by a colorblind dog
+	interpretation: Canine fairway ochre
+	short-name: gcbcd
+	hex: #B8A66A
+	accuracy: Too specific to dismiss
+	but: it possesses a minor weather system
+	funeral: Only after the wake gets weird
+	wedding: One champagne in, perfect
+
+entry
+	you-said: what's left is right
+	interpretation: Directional paradox violet
+	short-name: wslr
+	hex: #6B5CA5
+	accuracy: Peer-reviewed by vibes
+	but: it remembers being summer
+	funeral: Useful to someone, somewhere
+	wedding: Very, very reception
+
+entry
+	you-said: backyard rocket science
+	interpretation: Backyard rocket blue
+	short-name: brs
+	hex: #3E72D8
+	accuracy: Strangely canonical
+	but: the color showed up immediately
+	funeral: Only after the wake gets weird
+	wedding: One champagne in, perfect
+
+entry
+	you-said: piano keys reduced by 87
+	interpretation: Lone-key ivory
+	short-name: pkrb8
+	hex: #F0E8D2
+	accuracy: Extremely caller-dependent
+	but: it has one very good story
+	funeral: Better as a private thought
+	wedding: The DJ would approve
+
+entry
+	you-said: goatee on a gorgeous girl
+	interpretation: Velvet chin shadow
+	short-name: ggg
+	hex: #5B493D
+	accuracy: Extremely caller-dependent
+	but: it has one very good story
+	funeral: Reserved for the after-afterparty
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: penguins on the north pole
+	interpretation: Misplaced penguin frost
+	short-name: pnp
+	hex: #C6E4F1
+	accuracy: Emotionally exact
+	but: it possesses a minor weather system
+	funeral: Maybe in a very good hat
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: microwave dinner
+	interpretation: Aluminum-foil gravy gray
+	short-name: md
+	hex: #8B8A85
+	accuracy: Approximately psychic
+	but: it has excellent posture
+	funeral: Only after the wake gets weird
+	wedding: Only if there is a fog machine
+
+entry
+	you-said: sleet through the trees
+	interpretation: Sleet-filtered winter blue
+	short-name: stt
+	hex: #AABCC8
+	accuracy: Disputed by one uncle
+	but: the swatch is taking it very seriously
+	funeral: If the casket has cup holders
+	wedding: A bold plus-one
+
+entry
+	you-said: suffering succotash
+	interpretation: Aggrieved lima green
+	short-name: ss
+	hex: #A7B83E
+	accuracy: Reliable after 9 p.m.
+	but: the universe left the door unlocked
+	funeral: Keep this one out of the church
+	wedding: Better than another mason jar
+
+entry
+	you-said: dead right
+	interpretation: Unarguable oxblood
+	short-name: dr
+	hex: #5A1720
+	accuracy: Foundational nonsense
+	but: a mall in 1998 would understand
+	funeral: Useful to someone, somewhere
+	wedding: One champagne in, perfect
+
+entry
+	you-said: lonesome celebrity
+	interpretation: Afterparty lavender
+	short-name: lc
+	hex: #8B7CA8
+	accuracy: Disputed by one uncle
+	but: the lamp is now on your side
+	funeral: Keep this one out of the church
+	wedding: Only if the cake is also this color
+
+entry
+	you-said: tension when no-one else cares
+	interpretation: Unshared tension mauve
+	short-name: tc
+	hex: #76586E
+	accuracy: Reliable after 9 p.m.
+	but: the vibes have notarized it
+	funeral: Ask the family. Then ask again.
+	wedding: At the reception with conviction
+
+entry
+	you-said: amalfi coast need a bathroom, now
+	interpretation: Cobalt emergency blue
+	short-name: acnbn
+	hex: #1B78A6
+	accuracy: Cartographically suspect
+	but: the argument has a satisfying crunch
+	funeral: Bring flowers instead
+	wedding: Better than another mason jar
+
+entry
+	you-said: tons of gems but busted NES console
+	interpretation: Cartridge jewel teal
+	short-name: tgbnc
+	hex: #2F9D98
+	accuracy: Disputed by one uncle
+	but: the hex is frankly undeniable
+	funeral: Ask the family. Then ask again.
+	wedding: In the photo booth, absolutely
+
+entry
+	you-said: tell me you love me
+	interpretation: Unconditional porchlight gold
+	short-name: tmlm
+	hex: #F2C66D
+	accuracy: Disputed by one uncle
+	but: the lamp is now on your side
+	funeral: In a tiny pocket square only
+	wedding: A bold plus-one
+
+entry
+	you-said: dressed myself today
+	interpretation: Competent cardigan green
+	short-name: dmt
+	hex: #7F9A78
+	accuracy: Peer-reviewed by vibes
+	but: it remembers being summer
+	funeral: Only after the wake gets weird
+	wedding: Very, very reception
+
+entry
+	you-said: an orange in a centrifuge
+	interpretation: Citrus G-force orange
+	short-name: oc
+	hex: #FF6A17
+	accuracy: Cartographically suspect
+	but: the argument has a satisfying crunch
+	funeral: Respectfully, no
+	wedding: Only if the cake is also this color
+
+entry
+	you-said: my engineer uncle
+	interpretation: Caliper blue
+	short-name: eu
+	hex: #63798A
+	accuracy: A triumphant reach
+	but: it brought references, somehow
+	funeral: Useful to someone, somewhere
+	wedding: Very, very reception
+
+entry
+	you-said: a horse that dreams
+	interpretation: Moonlit mane blue
+	short-name: hd
+	hex: #7B88B6
+	accuracy: Legally a feeling
+	but: it has one very good story
+	funeral: Only if the deceased was hilarious
+	wedding: It understands the dress code spiritually
+
+entry
+	you-said: dusty piece of toasted bread
+	interpretation: Crumb suede tan
+	short-name: dptb
+	hex: #B8946A
+	accuracy: Disputed by one uncle
+	but: the swatch is taking it very seriously
+	funeral: If everyone signed a waiver
+	wedding: Only if the cake is also this color
+
+entry
+	you-said: drinking from a garden hose
+	interpretation: Hosewater green
+	short-name: dgh
+	hex: #6FAE99
+	accuracy: Emotionally exact
+	but: a tiny committee agrees
+	funeral: For a jazz funeral, perhaps
+	wedding: Very, very reception
+
+entry
+	you-said: broken guitar string
+	interpretation: Snapped nickel silver
+	short-name: bgs
+	hex: #9AA3A7
+	accuracy: Ranked #1 in a very small field
+	but: this is how colors get tenure
+	funeral: Keep this one out of the church
+	wedding: The bridesmaids would gossip for years
+
+entry
+	you-said: living alone on a planet with everything you need
+	interpretation: Sufficient solitude blue
+	short-name: lapen
+	hex: #5F8294
+	accuracy: A triumphant reach
+	but: a tiny committee agrees
+	funeral: Potentially iconic, definitely risky
+	wedding: The DJ would approve
+
+entry
+	you-said: lost tooth, found happiness
+	interpretation: Tooth-fairy silver
+	short-name: ltfh
+	hex: #D8D8CE
+	accuracy: Made of evidence, somehow
+	but: it brought references, somehow
+	funeral: Potentially iconic, definitely risky
+	wedding: One champagne in, perfect
+
+entry
+	you-said: walking to class with the hottest girl in it
+	interpretation: Hallway supernova rose
+	short-name: wchg
+	hex: #E6A1B5
+	accuracy: Cartographically suspect
+	but: nobody can prove you wrong in this room
+	funeral: Ask the family. Then ask again.
+	wedding: It could catch the bouquet
+
+entry
+	you-said: unmanned writing utensil
+	interpretation: Autonomous biro blue
+	short-name: uwu
+	hex: #3E5F9D
+	accuracy: Rigorous in a dream
+	but: the lamp is now on your side
+	funeral: Keep this one out of the church
+	wedding: Better than another mason jar
+
+entry
+	you-said: bend to squares, five to six times
+	interpretation: Folded-instruction blue
+	short-name: bst
+	hex: #7293B8
+	accuracy: Certified adjacent
+	but: the lamp is now on your side
+	funeral: Bring flowers instead
+	wedding: Throw it instead of rice
+
+entry
+	you-said: a modern cabin in the future
+	interpretation: Solar cedar gray
+	short-name: mcf
+	hex: #879A91
+	accuracy: Rigorous in a dream
+	but: the lamp is now on your side
+	funeral: Bring flowers instead
+	wedding: Better than another mason jar
+
+entry
+	you-said: lost my pants
+	interpretation: Public-embarrassment rose
+	short-name: lp
+	hex: #E4879D
+	accuracy: Made of evidence, somehow
+	but: a tiny committee agrees
+	funeral: Better as a private thought
+	wedding: Very, very reception
+
+entry
+	you-said: dug a hole to find nothing
+	interpretation: Hollow earth umber
+	short-name: dhfn
+	hex: #756759
+	accuracy: Foundational nonsense
+	but: it has excellent posture
+	funeral: Potentially iconic, definitely risky
+	wedding: Very, very reception
+
+entry
+	you-said: eating fruit but wanting vegetables
+	interpretation: Nutritional longing green
+	short-name: efwv
+	hex: #8CAA5B
+	accuracy: Too specific to dismiss
+	but: it brought references, somehow
+	funeral: Better as a private thought
+	wedding: One champagne in, perfect
+
+entry
+	you-said: tenugui diaper
+	interpretation: Indigo cloth compromise
+	short-name: td
+	hex: #51657A
+	accuracy: Foundational nonsense
+	but: it has one very good story
+	funeral: Better as a private thought
+	wedding: One champagne in, perfect
+
+entry
+	you-said: goldfish became a monster
+	interpretation: Menacing aquarium orange
+	short-name: gbm
+	hex: #E95325
+	accuracy: Extremely caller-dependent
+	but: it has one very good story
+	funeral: Reserved for the after-afterparty
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: awesome cologne built on bad smells
+	interpretation: Reformed musk amber
+	short-name: acbbs
+	hex: #A8754B
+	accuracy: Disputed by one uncle
+	but: the swatch is taking it very seriously
+	funeral: Not during the first act
+	wedding: At the reception with conviction
+
+entry
+	you-said: catch this lemon
+	interpretation: Incoming lemon yellow
+	short-name: ctl
+	hex: #F1E83A
+	accuracy: Certified adjacent
+	but: the color is doing most of the work
+	funeral: Bring flowers instead
+	wedding: Only if the cake is also this color
+
+entry
+	you-said: ovary fireworks
+	interpretation: Biological fireworks magenta
+	short-name: of
+	hex: #EE6CAC
+	accuracy: Peer-reviewed by vibes
+	but: a mall in 1998 would understand
+	funeral: Only if the deceased was hilarious
+	wedding: It understands the dress code spiritually
+
+entry
+	you-said: beach to hospital
+	interpretation: Sea-glass triage teal
+	short-name: bth
+	hex: #72B4AE
+	accuracy: Made of evidence, somehow
+	but: it possesses a minor weather system
+	funeral: Only after the wake gets weird
+	wedding: The DJ would approve
+
+entry
+	you-said: atlantis in a midwest backyard
+	interpretation: Submerged-lawn Atlantis teal
+	short-name: aimb
+	hex: #2D9CAA
+	accuracy: A triumphant reach
+	but: it possesses a minor weather system
+	funeral: A brave choice for the bereaved
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: mercury pancakes
+	interpretation: Breakfast-metal silver
+	short-name: mp
+	hex: #A7B3BE
+	accuracy: Too specific to dismiss
+	but: a tiny committee agrees
+	funeral: High risk, unforgettable
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: ebony elbows
+	interpretation: Elbow-polish umber
+	short-name: ee
+	hex: #2B201C
+	accuracy: Foundational nonsense
+	but: a mall in 1998 would understand
+	funeral: Only after the wake gets weird
+	wedding: Only if there is a fog machine
+
+entry
+	you-said: three quarters full vacuum
+	interpretation: Dust-bag ivory
+	short-name: tqfv
+	hex: #C8C0A8
+	accuracy: Reliable after 9 p.m.
+	but: the universe left the door unlocked
+	funeral: In a tiny pocket square only
+	wedding: At a beach wedding, dangerous
+
+entry
+	you-said: mood ring lost in the grass
+	interpretation: Tarnished-oracle green
+	short-name: mrlitg
+	hex: #72885B
+	accuracy: Too specific to dismiss
+	but: it brought references, somehow
+	funeral: Useful to someone, somewhere
+	wedding: One champagne in, perfect
+
+entry
+	you-said: broken opal repaired on a dream
+	interpretation: Dream-mended opal violet
+	short-name: boroad
+	hex: #C8B5D9
+	accuracy: Unlicensed but persuasive
+	but: this is how colors get tenure
+	funeral: In a tiny pocket square only
+	wedding: A bold plus-one
+
+entry
+	you-said: scroll-driven breath power decay
+	interpretation: Velocity afterimage blue
+	short-name: sdbpd
+	hex: #6F8FA6
+	accuracy: Strangely canonical
+	but: it brought references, somehow
+	funeral: High risk, unforgettable
+	wedding: Yes, but not before dinner
+
+entry
+	you-said: gorgeous 72
+	interpretation: Blue-hour applause violet
+	short-name: g72
+	hex: #6F72FF
+	accuracy: Factually inadmissible
+	but: it looks expensive in low light
+	funeral: Absolutely not near the program
+	wedding: It has best-man energy
+
+entry
+	you-said: magical 96
+	interpretation: Potion-screen ultraviolet
+	short-name: m96
+	hex: #8A5CFF
+	accuracy: Certified adjacent
+	but: the lamp is now on your side
+	funeral: Keep this one out of the church
+	wedding: Throw it instead of rice
