@@ -5,7 +5,39 @@ const headers = [...(table?.querySelectorAll("th") ?? [])];
 const state = {
 	key: null,
 	direction: "ascending",
+	colorModeIndex: -1,
 };
+
+const originalRowIndex = new Map(
+	body ? [...body.rows].map((row, index) => [row, index]) : [],
+);
+
+const colorModes = [
+	{
+		id: "bright",
+		label: "Light: brightest to muted",
+		ariaSort: "descending",
+		direction: "descending",
+	},
+	{
+		id: "dim",
+		label: "Light: muted to brightest",
+		ariaSort: "ascending",
+		direction: "ascending",
+	},
+	{
+		id: "spectrum",
+		label: "Light: spectrum order",
+		ariaSort: "other",
+		direction: "ascending",
+	},
+	{
+		id: "creation",
+		label: "Light: creation order",
+		ariaSort: "other",
+		direction: "ascending",
+	},
+];
 
 let activeBackdropHex = null;
 
@@ -174,20 +206,48 @@ function hexToHsv(hex) {
 	const maximum = Math.max(red, green, blue);
 	const minimum = Math.min(red, green, blue);
 	const delta = maximum - minimum;
+	let hue = 0;
+
+	if (delta !== 0) {
+		if (maximum === red) hue = ((green - blue) / delta) % 6;
+		if (maximum === green) hue = ((blue - red) / delta) + 2;
+		if (maximum === blue) hue = ((red - green) / delta) + 4;
+		hue *= 60;
+		if (hue < 0) hue += 360;
+	}
 
 	return {
+		hue,
 		brightness: maximum,
 		saturation: maximum === 0 ? 0 : delta / maximum,
 		lightness: (maximum + minimum) / 2,
 	};
 }
 
-function valueFor(row, key) {
+function valueFor(row, key, colorMode = null) {
 	const cells = row.cells;
 
 	if (key === "color") {
 		const hex = cells[4].textContent.trim();
 		const hsv = hexToHsv(hex);
+
+		if (colorMode === "creation") return originalRowIndex.get(row);
+
+		if (colorMode === "spectrum") {
+			const hueFamily = Math.floor(
+				((hsv.hue + 22.5) % 360) / 45,
+			);
+			const spectrumFamily = (hueFamily - 6 + 8) % 8;
+
+			return [
+				hsv.saturation === 0 ? 1 : 0,
+				spectrumFamily,
+				-hsv.brightness,
+				-hsv.saturation,
+				hsv.hue,
+			];
+		}
+
 		return [hsv.brightness, hsv.saturation, hsv.lightness];
 	}
 
@@ -209,23 +269,36 @@ function compareValues(first, second) {
 		return 0;
 	}
 
+	if (typeof first === "number") return first - second;
+
 	return first.localeCompare(second);
 }
 
 function sortRows(key) {
-	if (state.key === key) {
+	let colorMode = null;
+	let activeColorMode = null;
+
+	if (key === "color") {
+		state.colorModeIndex = state.key === "color"
+			? (state.colorModeIndex + 1) % colorModes.length
+			: 0;
+		activeColorMode = colorModes[state.colorModeIndex];
+		colorMode = activeColorMode.id;
+		state.direction = activeColorMode.direction;
+	} else if (state.key === key) {
 		state.direction = state.direction === "ascending"
 			? "descending"
 			: "ascending";
 	} else {
-		state.direction = key === "color" ? "descending" : "ascending";
+		state.direction = "ascending";
+		state.colorModeIndex = -1;
 	}
 	state.key = key;
 
 	const multiplier = state.direction === "ascending" ? 1 : -1;
 
 	[...body.rows]
-		.map((row, index) => ({ row, index, value: valueFor(row, key) }))
+		.map((row, index) => ({ row, index, value: valueFor(row, key, colorMode) }))
 		.sort((first, second) => {
 			const comparison = compareValues(first.value, second.value);
 			return comparison ? comparison * multiplier : first.index - second.index;
@@ -233,12 +306,25 @@ function sortRows(key) {
 		.forEach(({ row }) => body.append(row));
 
 	headers.forEach((header) => {
+		const button = header.querySelector("[data-sort]");
+		const isActive = button?.dataset.sort === key;
+
 		header.setAttribute(
 			"aria-sort",
-			header.querySelector("[data-sort]")?.dataset.sort === key
-				? state.direction
+			isActive
+				? activeColorMode?.ariaSort ?? state.direction
 				: "none",
 		);
+
+		if (!button) return;
+
+		if (isActive && activeColorMode) {
+			button.dataset.sortMode = activeColorMode.id;
+			button.setAttribute("aria-label", activeColorMode.label);
+		} else {
+			delete button.dataset.sortMode;
+			button.removeAttribute("aria-label");
+		}
 	});
 }
 

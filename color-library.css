@@ -220,6 +220,16 @@ th {
 	color: #9eb4d5;
 }
 
+.sort-button[data-sort-mode="spectrum"] .sort-indicator::after {
+	content: "◒";
+	color: #d5a9ef;
+}
+
+.sort-button[data-sort-mode="creation"] .sort-indicator::after {
+	content: "↺";
+	color: #9eb4d5;
+}
+
 tbody tr {
 	transition: background-color 160ms ease;
 }
