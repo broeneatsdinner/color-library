@@ -6,6 +6,7 @@ const swatchGrid = document.querySelector(".swatch-grid");
 const colorField = document.querySelector(".color-field");
 const viewButtons = [...document.querySelectorAll("[data-view]")];
 const viewToggle = document.querySelector(".view-toggle");
+const heroWave = document.querySelector(".hero-wave-svg");
 const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 const state = {
@@ -50,6 +51,91 @@ const colorModes = [
 ];
 
 let activeBackdropHex = null;
+
+function playHeroWave() {
+	if (!heroWave) return;
+	if (reducedMotionQuery.matches) {
+		heroWave.style.opacity = "0.14";
+		return;
+	}
+
+	const paths = [...heroWave.children].filter((child) => child.tagName.toLowerCase() === "path");
+	const defs = heroWave.querySelector("defs");
+	const xmlns = "http://www.w3.org/2000/svg";
+	const animations = [
+		heroWave.animate(
+			[
+				{ opacity: 0 },
+				{ opacity: 0.2 },
+			],
+			{
+				duration: 500,
+				easing: "ease-out",
+				fill: "forwards",
+			},
+		),
+	];
+
+	paths.forEach((path, index) => {
+		const clone = path.cloneNode();
+		const length = clone.getTotalLength();
+		const mask = document.createElementNS(xmlns, "mask");
+
+		clone.setAttribute("stroke-dasharray", "");
+		mask.setAttribute("id", `hero-wave-${index}`);
+		mask.append(clone);
+		defs.append(mask);
+		path.setAttribute("mask", `url(#hero-wave-${index})`);
+
+		clone.style.strokeDasharray = length;
+		clone.style.strokeDashoffset = length;
+
+		animations.push(
+			clone.animate(
+				[
+					{ strokeDashoffset: length },
+					{ strokeDashoffset: length * 3 },
+				],
+				{
+					delay: index * 35,
+					duration: 6500,
+					easing: "ease-in-out",
+					fill: "forwards",
+				},
+			),
+		);
+
+		animations.push(
+			path.animate(
+				[
+					{ strokeDashoffset: 0 },
+					{ strokeDashoffset: length * 0.4 },
+				],
+				{
+					delay: index * 35,
+					duration: 6500,
+					easing: "linear",
+					fill: "forwards",
+				},
+			),
+		);
+	});
+
+	Promise.allSettled(animations.map((animation) => animation.finished))
+		.then(() => {
+			heroWave.animate(
+				[
+					{ opacity: 0.2 },
+					{ opacity: 0 },
+				],
+				{
+					duration: 1200,
+					easing: "ease-out",
+					fill: "forwards",
+				},
+			);
+		});
+}
 
 const assessmentCopy = {
 	accuracy: [
@@ -884,6 +970,7 @@ window.addEventListener("resize", updateFieldDotPositions);
 window.addEventListener("scroll", updateFieldDotPositions, { passive: true });
 
 if (body) {
+	playHeroWave();
 	attachClassifications();
 	attachTooltipFollowers();
 	refreshSwatchGrid();
