@@ -66,6 +66,7 @@ const swatchBreathLensFloor = 0.42;
 const swatchBreathMinDuration = 360;
 const swatchBreathMidDuration = 720;
 const swatchBreathMaxDuration = 1080;
+const heroWaveVariant = "welding-sparks";
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -75,24 +76,87 @@ function playHeroWave() {
 	}
 
 	const paths = [...heroWave.children].filter((child) => child.tagName.toLowerCase() === "path");
-	const defs = heroWave.querySelector("defs");
-	const xmlns = "http://www.w3.org/2000/svg";
-	const waveId = `hero-wave-ltr-${Date.now()}`;
-	const animations = [
-		heroWave.animate(
+	const variants = {
+		"top-to-bottom": playHeroWaveTopToBottom,
+		"left-to-right": playHeroWaveLeftToRight,
+		"welding-sparks": playHeroWaveWeldingSparks,
+	};
+
+	(variants[heroWaveVariant] ?? variants["welding-sparks"])(paths);
+}
+
+function playHeroWaveTopToBottom(paths) {
+	heroWave.style.transform = "translate3d(-2.5vw, -1%, 0)";
+	heroWave.animate(
+		[
+			{ opacity: 0, transform: "translate3d(-2.5vw, -1%, 0)" },
+			{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.12 },
+			{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.78 },
+			{ opacity: 0, transform: "translate3d(1vw, 0.5%, 0)" },
+		],
+		{
+			duration: 6200,
+			easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+			fill: "forwards",
+		},
+	);
+
+	paths.forEach((path, index) => {
+		const lineOpacity = 0.7 + (index % 4) * 0.1;
+		const delay = index * 38;
+
+		path.style.opacity = 0;
+
+		path.animate(
 			[
-				{ opacity: 0, transform: "translate3d(-1.6vw, -0.8%, 0)" },
-				{ opacity: 1, transform: "translate3d(-0.6vw, -0.2%, 0)", offset: 0.14 },
-				{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.78 },
-				{ opacity: 0, transform: "translate3d(0.8vw, 0.4%, 0)" },
+				{ opacity: 0 },
+				{ opacity: lineOpacity, offset: 0.28 },
+				{ opacity: lineOpacity },
 			],
 			{
-				duration: 6200,
+				delay,
+				duration: 1600,
 				easing: "cubic-bezier(0.22, 1, 0.36, 1)",
 				fill: "forwards",
 			},
-		),
-	];
+		);
+
+		if (index % 3 === 0) {
+			path.animate(
+				[
+					{ strokeDashoffset: 72 },
+					{ strokeDashoffset: 0 },
+				],
+				{
+					delay,
+					duration: 4200,
+					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+					fill: "forwards",
+				},
+			);
+		}
+	});
+}
+
+function playHeroWaveLeftToRight(paths) {
+	const defs = heroWave.querySelector("defs");
+	const xmlns = "http://www.w3.org/2000/svg";
+	const waveId = `hero-wave-ltr-${Date.now()}`;
+
+	heroWave.style.transform = "translate3d(-1.6vw, -0.8%, 0)";
+	heroWave.animate(
+		[
+			{ opacity: 0, transform: "translate3d(-1.6vw, -0.8%, 0)" },
+			{ opacity: 1, transform: "translate3d(-0.6vw, -0.2%, 0)", offset: 0.14 },
+			{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.78 },
+			{ opacity: 0, transform: "translate3d(0.8vw, 0.4%, 0)" },
+		],
+		{
+			duration: 6200,
+			easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+			fill: "forwards",
+		},
+	);
 
 	paths.forEach((path, index) => {
 		const box = path.getBBox();
@@ -114,51 +178,145 @@ function playHeroWave() {
 		path.setAttribute("clip-path", `url(#${waveId}-${index})`);
 		path.style.opacity = 0;
 
-		animations.push(
-			rect.animate(
-				[
-					{ width: 0 },
-					{ width: box.width + 32 },
-				],
-				{
-					delay,
-					duration,
-					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-					fill: "forwards",
-				},
-			),
+		rect.animate(
+			[
+				{ width: 0 },
+				{ width: box.width + 32 },
+			],
+			{
+				delay,
+				duration,
+				easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+				fill: "forwards",
+			},
 		);
 
-		animations.push(
-			path.animate(
-				[
-					{ opacity: 0 },
-					{ opacity: lineOpacity, offset: 0.18 },
-					{ opacity: lineOpacity },
-				],
-				{
-					delay,
-					duration: 900,
-					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-					fill: "forwards",
-				},
-			),
+		path.animate(
+			[
+				{ opacity: 0 },
+				{ opacity: lineOpacity, offset: 0.18 },
+				{ opacity: lineOpacity },
+			],
+			{
+				delay,
+				duration: 900,
+				easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+				fill: "forwards",
+			},
 		);
 
 		if (index % 3 === 0) {
-			animations.push(
-				path.animate(
-					[
-						{ strokeDashoffset: 72 },
-						{ strokeDashoffset: 0 },
-					],
-					{
-						delay,
-						duration: duration + 800,
-						easing: "cubic-bezier(0.22, 1, 0.36, 1)",
-						fill: "forwards",
-					},
-				),
+			path.animate(
+				[
+					{ strokeDashoffset: 72 },
+					{ strokeDashoffset: 0 },
+				],
+				{
+					delay,
+					duration: duration + 800,
+					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+					fill: "forwards",
+				},
+			);
+		}
+	});
+}
+
+function playHeroWaveWeldingSparks(paths) {
+	const xmlns = "http://www.w3.org/2000/svg";
+	const sparkLayer = document.createElementNS(xmlns, "g");
+
+	heroWave.style.transform = "translate3d(-1vw, -0.8%, 0)";
+	heroWave.animate(
+		[
+			{ opacity: 0, transform: "translate3d(-1vw, -0.8%, 0)" },
+			{ opacity: 1, transform: "translate3d(-0.2vw, -0.3%, 0)", offset: 0.1 },
+			{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.78 },
+			{ opacity: 0, transform: "translate3d(0.6vw, 0.5%, 0)" },
+		],
+		{
+			duration: 6200,
+			easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+			fill: "forwards",
+		},
+	);
+
+	sparkLayer.setAttribute("class", "hero-sparks");
+	heroWave.append(sparkLayer);
+
+	paths.forEach((path, index) => {
+		const sparkSeed = (index * 9301 + 49297) % 233280;
+		const sparkSeedAlt = (index * 431 + 917) % 997;
+		const lineOpacity = 0.7 + (index % 4) * 0.1;
+		const ignitionDelay = 120 + (sparkSeed % 1900);
+		const lineDelay = Math.max(0, ignitionDelay - 220);
+
+		path.style.opacity = 0;
+
+		path.animate(
+			[
+				{ opacity: 0 },
+				{ opacity: Math.min(1, lineOpacity + 0.25), offset: 0.16 },
+				{ opacity: lineOpacity, offset: 0.48 },
+				{ opacity: lineOpacity },
+			],
+			{
+				delay: lineDelay,
+				duration: 1700,
+				easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+				fill: "forwards",
+			},
+		);
+
+		if (index % 2 === 0) {
+			path.animate(
+				[
+					{ strokeDashoffset: 96 + (sparkSeedAlt % 72) },
+					{ strokeDashoffset: 0 },
+				],
+				{
+					delay: lineDelay,
+					duration: 2800 + (sparkSeedAlt % 900),
+					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+					fill: "forwards",
+				},
+			);
+		}
+
+		if (index % 3 === 0) {
+			const length = path.getTotalLength();
+			const point = path.getPointAtLength(length * (0.18 + (sparkSeedAlt % 56) / 100));
+			const spark = document.createElementNS(xmlns, "line");
+			const angle = -72 + (sparkSeed % 116);
+			const distance = 36 + (sparkSeedAlt % 72);
+			const fall = 18 + ((index * 29) % 82);
+			const dx = Math.cos(angle * Math.PI / 180) * distance;
+			const dy = Math.sin(angle * Math.PI / 180) * distance + fall;
+			const sparkLength = 6 + (sparkSeed % 15);
+
+			spark.setAttribute("x1", point.x);
+			spark.setAttribute("y1", point.y);
+			spark.setAttribute("x2", point.x + sparkLength);
+			spark.setAttribute("y2", point.y);
+			spark.setAttribute("stroke", path.getAttribute("stroke") ?? "#f9d56e");
+			spark.setAttribute("stroke-width", 2 + (sparkSeedAlt % 3));
+			spark.setAttribute("stroke-linecap", "round");
+			spark.style.opacity = 0;
+			sparkLayer.append(spark);
+
+			spark.animate(
+				[
+					{ opacity: 0, transform: "translate3d(0, 0, 0) scaleX(0.4)" },
+					{ opacity: 1, transform: "translate3d(0, 0, 0) scaleX(1)", offset: 0.1 },
+					{ opacity: 0.65, transform: `translate3d(${dx * 0.54}px, ${dy * 0.42}px, 0) scaleX(1.2)`, offset: 0.55 },
+					{ opacity: 0, transform: `translate3d(${dx}px, ${dy}px, 0) scaleX(0.25)` },
+				],
+				{
+					delay: ignitionDelay,
+					duration: 900 + (sparkSeed % 800),
+					easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+					fill: "forwards",
+				},
 			);
 		}
 	});
