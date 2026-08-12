@@ -58,9 +58,11 @@ let swatchBreathFrame = null;
 let swatchBreathPower = 0;
 let swatchTouchY = null;
 let swatchBreathScrollY = window.scrollY;
+let swatchBreathScrollDirection = 1;
 let swatchBreathRows = [];
 const swatchBreathDirection = 1;
 const swatchBreathMaxSpacing = 52;
+const swatchBreathLensFloor = 0.42;
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -548,11 +550,11 @@ function measureSwatchRows() {
 	swatchGrid.querySelectorAll(".swatch-card").forEach((card) => {
 		const rect = card.getBoundingClientRect();
 		const key = Math.round(rect.top);
-		if (!rowMap.has(key)) rowMap.set(key, { top: rect.top, cards: [] });
+		if (!rowMap.has(key)) rowMap.set(key, { center: rect.top + window.scrollY + (rect.height / 2), cards: [] });
 		rowMap.get(key).cards.push(card);
 	});
 
-	swatchBreathRows = [...rowMap.values()].sort((first, second) => first.top - second.top);
+	swatchBreathRows = [...rowMap.values()].sort((first, second) => first.center - second.center);
 }
 
 function resetSwatchBreathing() {
@@ -562,6 +564,7 @@ function resetSwatchBreathing() {
 		card.style.removeProperty("--swatch-breath-y");
 	});
 	swatchBreathScrollY = window.scrollY;
+	swatchBreathScrollDirection = 1;
 }
 
 function updateSwatchBreathing() {
@@ -586,10 +589,18 @@ function updateSwatchBreathing() {
 	if (!swatchBreathRows.length) measureSwatchRows();
 	const easedPower = swatchBreathPower * swatchBreathPower * (3 - (2 * swatchBreathPower));
 	const spacing = easedPower * swatchBreathDirection * swatchBreathMaxSpacing;
-	const midpoint = (swatchBreathRows.length - 1) / 2;
+	const rowStep = Math.max(1, Math.abs((swatchBreathRows[1]?.center ?? swatchBreathRows[0]?.center ?? 1) - (swatchBreathRows[0]?.center ?? 0)));
+	const focalY = (window.innerHeight / 2) + (swatchBreathScrollDirection * window.innerHeight * 0.06);
+	const falloff = Math.max(1, window.innerHeight / 2);
 
-	swatchBreathRows.forEach((row, index) => {
-		const y = (index - midpoint) * spacing;
+	swatchBreathRows.forEach((row) => {
+		const viewportCenter = row.center - window.scrollY;
+		const distance = Math.abs(viewportCenter - focalY);
+		const lensProgress = Math.max(0, 1 - (distance / falloff));
+		const easedLensProgress = lensProgress * lensProgress * (3 - (2 * lensProgress));
+		const easedLens = swatchBreathLensFloor + ((1 - swatchBreathLensFloor) * easedLensProgress);
+		const rowDistanceFromFocus = (viewportCenter - focalY) / rowStep;
+		const y = rowDistanceFromFocus * spacing * easedLens;
 		row.cards.forEach((card) => {
 			card.style.setProperty("--swatch-breath-y", `${y.toFixed(2)}px`);
 		});
@@ -603,8 +614,9 @@ function requestSwatchBreathingUpdate() {
 	swatchBreathFrame = requestAnimationFrame(updateSwatchBreathing);
 }
 
-function addSwatchBreath(amount) {
+function addSwatchBreath(amount, direction = 0) {
 	if (!swatchGrid || swatchGrid.hidden || activeView !== "swatches" || reducedMotionQuery.matches) return;
+	if (direction) swatchBreathScrollDirection = direction;
 	swatchBreathPower = Math.min(1, swatchBreathPower + amount);
 	requestSwatchBreathingUpdate();
 }
@@ -613,7 +625,7 @@ function addSwatchBreathFromScroll() {
 	const currentY = window.scrollY;
 	const delta = currentY - swatchBreathScrollY;
 	swatchBreathScrollY = currentY;
-	addSwatchBreath(Math.min(Math.abs(delta) / 900, 0.32));
+	addSwatchBreath(Math.min(Math.abs(delta) / 900, 0.32), Math.sign(delta));
 }
 
 const fieldPullDistance = 210;
@@ -933,21 +945,33 @@ window.addEventListener("resize", () => {
 	if (activeView === "swatches") requestAnimationFrame(measureSwatchRows);
 });
 window.addEventListener("wheel", (event) => {
-	addSwatchBreath(Math.min(Math.abs(event.deltaY) / 900, 0.32));
+	addSwatchBreath(Math.min(Math.abs(event.deltaY) / 900, 0.32), Math.sign(event.deltaY));
 }, { passive: true });
 window.addEventListener("touchstart", (event) => {
 	swatchTouchY = event.touches[0]?.clientY ?? null;
 }, { passive: true });
 window.addEventListener("touchmove", (event) => {
 	const nextY = event.touches[0]?.clientY ?? null;
-	if (swatchTouchY !== null && nextY !== null) addSwatchBreath(Math.min(Math.abs(nextY - swatchTouchY) / 520, 0.28));
+	if (swatchTouchY !== null && nextY !== null) {
+		const delta = swatchTouchY - nextY;
+		addSwatchBreath(Math.min(Math.abs(delta) / 520, 0.28), Math.sign(delta));
+	}
 	swatchTouchY = nextY;
 }, { passive: true });
 window.addEventListener("touchend", () => {
 	swatchTouchY = null;
 }, { passive: true });
 window.addEventListener("keydown", (event) => {
-	if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"].includes(event.key)) addSwatchBreath(0.34);
+	const keyDirections = {
+		ArrowDown: 1,
+		PageDown: 1,
+		" ": 1,
+		End: 1,
+		ArrowUp: -1,
+		PageUp: -1,
+		Home: -1,
+	};
+	if (event.key in keyDirections) addSwatchBreath(0.34, keyDirections[event.key]);
 });
 updateViewToggleState();
 
