@@ -51,8 +51,14 @@ const colorModes = [
 ];
 
 let activeBackdropHex = null;
+let activeView = "list";
 let viewToggleShown = false;
 let viewToggleHideTimer = null;
+let swatchBreathFrame = null;
+let swatchBreathPower = 0;
+let swatchTouchY = null;
+let swatchBreathScrollY = window.scrollY;
+let swatchIgnoreScrollUntil = 0;
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -526,6 +532,62 @@ function refreshSwatchGrid() {
 			return card;
 		}),
 	);
+	requestSwatchBreathingUpdate();
+}
+
+function resetSwatchBreathing() {
+	if (!swatchGrid) return;
+	swatchBreathPower = 0;
+	swatchGrid.style.removeProperty("--swatch-row-gap");
+	swatchBreathScrollY = window.scrollY;
+	swatchIgnoreScrollUntil = 0;
+}
+
+function updateSwatchBreathing() {
+	swatchBreathFrame = null;
+	if (!swatchGrid || swatchGrid.hidden || activeView !== "swatches") {
+		resetSwatchBreathing();
+		return;
+	}
+
+	if (reducedMotionQuery.matches) {
+		resetSwatchBreathing();
+		return;
+	}
+
+	swatchBreathPower *= 0.84;
+
+	if (swatchBreathPower < 0.015) {
+		resetSwatchBreathing();
+		return;
+	}
+
+	const easedPower = swatchBreathPower * swatchBreathPower * (3 - (2 * swatchBreathPower));
+	const maxExtraGap = Math.min(96, Math.max(44, window.innerHeight * 0.1));
+	const rowGap = 12 + (easedPower * maxExtraGap);
+	swatchGrid.style.setProperty("--swatch-row-gap", `${rowGap.toFixed(2)}px`);
+	swatchIgnoreScrollUntil = performance.now() + 220;
+
+	requestSwatchBreathingUpdate();
+}
+
+function requestSwatchBreathingUpdate() {
+	if (swatchBreathFrame !== null) return;
+	swatchBreathFrame = requestAnimationFrame(updateSwatchBreathing);
+}
+
+function addSwatchBreath(amount) {
+	if (!swatchGrid || swatchGrid.hidden || activeView !== "swatches" || reducedMotionQuery.matches) return;
+	swatchBreathPower = Math.min(1, swatchBreathPower + amount);
+	requestSwatchBreathingUpdate();
+}
+
+function addSwatchBreathFromScroll() {
+	const currentY = window.scrollY;
+	const delta = currentY - swatchBreathScrollY;
+	swatchBreathScrollY = currentY;
+	if (performance.now() < swatchIgnoreScrollUntil) return;
+	addSwatchBreath(Math.min(Math.abs(delta) / 900, 0.32));
 }
 
 const fieldPullDistance = 210;
@@ -710,6 +772,7 @@ function refreshColorField() {
 }
 
 function setView(view) {
+	activeView = view;
 	const showSwatches = view === "swatches";
 	const showField = view === "field";
 	if (showSwatches) refreshSwatchGrid();
@@ -719,6 +782,7 @@ function setView(view) {
 	if (colorField) colorField.hidden = !showField;
 	// Each library mode is its own destination: switch modes from the top.
 	window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+	if (showSwatches) resetSwatchBreathing();
 
 	viewButtons.forEach((button) => {
 		const isActive = button.dataset.view === view;
@@ -727,6 +791,7 @@ function setView(view) {
 	});
 
 	requestAnimationFrame(updateViewToggleState);
+	requestSwatchBreathingUpdate();
 }
 
 function updateViewToggleState() {
@@ -829,8 +894,31 @@ viewButtons.forEach((button) => {
 	button.addEventListener("click", () => setView(button.dataset.view));
 });
 
-window.addEventListener("scroll", updateViewToggleState, { passive: true });
-window.addEventListener("resize", updateViewToggleState);
+window.addEventListener("scroll", () => {
+	updateViewToggleState();
+	addSwatchBreathFromScroll();
+}, { passive: true });
+window.addEventListener("resize", () => {
+	updateViewToggleState();
+	resetSwatchBreathing();
+});
+window.addEventListener("wheel", (event) => {
+	addSwatchBreath(Math.min(Math.abs(event.deltaY) / 900, 0.32));
+}, { passive: true });
+window.addEventListener("touchstart", (event) => {
+	swatchTouchY = event.touches[0]?.clientY ?? null;
+}, { passive: true });
+window.addEventListener("touchmove", (event) => {
+	const nextY = event.touches[0]?.clientY ?? null;
+	if (swatchTouchY !== null && nextY !== null) addSwatchBreath(Math.min(Math.abs(nextY - swatchTouchY) / 520, 0.28));
+	swatchTouchY = nextY;
+}, { passive: true });
+window.addEventListener("touchend", () => {
+	swatchTouchY = null;
+}, { passive: true });
+window.addEventListener("keydown", (event) => {
+	if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"].includes(event.key)) addSwatchBreath(0.34);
+});
 updateViewToggleState();
 
 let draggedRow = null;
