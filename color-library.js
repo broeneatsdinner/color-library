@@ -224,6 +224,18 @@ function hexToHsv(hex) {
 	};
 }
 
+function spectrumFamilyForHue(hue) {
+	// Deliberately perceptual, not mathematically even: this keeps the
+	// colors people call orange (and the colors people call pink) together.
+	if (hue >= 250 && hue < 300) return 0; // purple
+	if (hue >= 300) return 1; // pink
+	if (hue < 40) return 2; // red / orange
+	if (hue < 75) return 3; // yellow
+	if (hue < 165) return 4; // green
+	if (hue < 195) return 5; // teal
+	return 6; // blue
+}
+
 function valueFor(row, key, colorMode = null) {
 	const cells = row.cells;
 
@@ -234,13 +246,11 @@ function valueFor(row, key, colorMode = null) {
 		if (colorMode === "creation") return originalRowIndex.get(row);
 
 		if (colorMode === "spectrum") {
-			const hueFamily = Math.floor(
-				((hsv.hue + 22.5) % 360) / 45,
-			);
-			const spectrumFamily = (hueFamily - 6 + 8) % 8;
+			const spectrumFamily = spectrumFamilyForHue(hsv.hue);
+			const isNeutral = hsv.saturation < 0.22;
 
 			return [
-				hsv.saturation === 0 ? 1 : 0,
+				isNeutral ? 1 : 0,
 				spectrumFamily,
 				-hsv.brightness,
 				-hsv.saturation,
