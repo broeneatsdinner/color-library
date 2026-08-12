@@ -3,8 +3,10 @@ const body = table?.querySelector("tbody");
 const headers = [...(table?.querySelectorAll("th") ?? [])];
 const tableWrap = document.querySelector(".table-wrap");
 const swatchGrid = document.querySelector(".swatch-grid");
+const colorField = document.querySelector(".color-field");
 const viewButtons = [...document.querySelectorAll("[data-view]")];
 const viewToggle = document.querySelector(".view-toggle");
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 const state = {
 	key: null,
@@ -438,11 +440,194 @@ function refreshSwatchGrid() {
 	);
 }
 
+const fieldPullDistance = 70;
+const fieldBurstDuration = 2200;
+const fieldBurstStagger = 300;
+let fieldBurstActive = false;
+
+function updateFieldDotPositions() {
+	if (!colorField) return;
+
+	colorField.querySelectorAll(".field-dot").forEach((dot) => {
+		const rect = dot.getBoundingClientRect();
+		dot.fieldCenter = {
+			x: (rect.left + rect.right) / 2,
+			y: (rect.top + rect.bottom) / 2,
+		};
+	});
+}
+
+function pullFieldDots(event) {
+	if (!colorField || colorField.hidden || fieldBurstActive) return;
+
+	const pointerX = event?.clientX ?? -fieldPullDistance;
+	const pointerY = event?.clientY ?? -fieldPullDistance;
+
+	colorField.querySelectorAll(".field-dot").forEach((dot) => {
+		if (!dot.fieldCenter) return;
+
+		const differenceX = pointerX - dot.fieldCenter.x;
+		const differenceY = pointerY - dot.fieldCenter.y;
+		const distance = Math.hypot(differenceX, differenceY);
+
+		if (distance < fieldPullDistance) {
+			const percent = distance / fieldPullDistance;
+			dot.dataset.pulled = "true";
+			dot.classList.remove("is-returning");
+			dot.style.setProperty("--field-x", `${differenceX * percent}px`);
+			dot.style.setProperty("--field-y", `${differenceY * percent}px`);
+			return;
+		}
+
+		if (dot.dataset.pulled !== "true") return;
+
+		delete dot.dataset.pulled;
+		dot.classList.add("is-returning");
+		dot.style.setProperty("--field-x", "0px");
+		dot.style.setProperty("--field-y", "0px");
+	});
+}
+
+function resetFieldDotPull(dot) {
+	delete dot.dataset.pulled;
+	dot.classList.add("is-returning");
+	dot.style.setProperty("--field-x", "0px");
+	dot.style.setProperty("--field-y", "0px");
+}
+
+function fieldBurstOffset(index) {
+	const angle = ((250 + (Math.random() * 40)) * Math.PI) / 180;
+	const velocity = 400 + (Math.random() * 600);
+	const travelTime = 0.74;
+	const gravity = 2000;
+
+	return {
+		x: Math.cos(angle) * velocity * travelTime,
+		y: (Math.sin(angle) * velocity * travelTime) + (0.5 * gravity * travelTime * travelTime),
+		rotation: ((index % 2 === 0 ? -1 : 1) * (8 + Math.random() * 18)),
+	};
+}
+
+function fieldBurstDelay(index, columnCount, rowCount, originIndex) {
+	const column = index % columnCount;
+	const row = Math.floor(index / columnCount);
+	const originColumn = originIndex % columnCount;
+	const originRow = Math.floor(originIndex / columnCount);
+	const distance = Math.hypot(column - originColumn, row - originRow);
+	const maxDistance = Math.hypot(columnCount - 1, rowCount - 1) || 1;
+
+	return (distance / maxDistance) * fieldBurstStagger;
+}
+
+function burstColorField(originIndex) {
+	if (!colorField || fieldBurstActive) return;
+
+	const dots = [...colorField.querySelectorAll(".field-dot")];
+	if (!dots.length) return;
+
+	if (reducedMotionQuery.matches) {
+		dots[originIndex]?.animate(
+			[
+				{ transform: "scale(1)" },
+				{ transform: "scale(1.34)" },
+				{ transform: "scale(1)" },
+			],
+			{ duration: 240, easing: "ease-out" },
+		);
+		return;
+	}
+
+	fieldBurstActive = true;
+
+	const columnCount = Number(colorField.dataset.fieldColumns) || Math.ceil(Math.sqrt(dots.length));
+	const rowCount = Number(colorField.dataset.fieldRows) || Math.ceil(dots.length / columnCount);
+	const animations = dots.map((dot, index) => {
+		const offset = fieldBurstOffset(index);
+		const delay = fieldBurstDelay(index, columnCount, rowCount, originIndex);
+
+		resetFieldDotPull(dot);
+		dot.classList.add("is-bursting");
+
+		return dot.animate(
+			[
+				{
+					transform: "translate3d(0, 0, 0) scale(1)",
+					easing: "cubic-bezier(0.17, 0.67, 0.27, 1)",
+				},
+				{
+					offset: 0.55,
+					transform: `translate3d(${offset.x}px, ${offset.y}px, 0) rotate(${offset.rotation}deg) scale(1.05)`,
+					easing: "cubic-bezier(0.22, 1.6, 0.36, 1)",
+				},
+				{
+					transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)",
+				},
+			],
+			{
+				delay,
+				duration: fieldBurstDuration,
+				fill: "both",
+			},
+		);
+	});
+
+	Promise.allSettled(animations.map((animation) => animation.finished))
+		.then(() => {
+			dots.forEach((dot) => dot.classList.remove("is-bursting"));
+			fieldBurstActive = false;
+			updateFieldDotPositions();
+			pullFieldDots();
+		});
+}
+
+function refreshColorField() {
+	if (!body || !colorField) return;
+
+	const libraryRows = [...body.rows];
+	const columnCount = Math.ceil(Math.sqrt(libraryRows.length));
+	const rowCount = Math.ceil(libraryRows.length / columnCount);
+	const grid = document.createElement("div");
+	grid.className = "field-grid";
+	colorField.dataset.fieldColumns = String(columnCount);
+	colorField.dataset.fieldRows = String(rowCount);
+
+	for (let start = 0; start < libraryRows.length; start += columnCount) {
+		const fieldRow = document.createElement("div");
+		fieldRow.className = "field-row";
+
+		libraryRows.slice(start, start + columnCount).forEach((row, offsetIndex) => {
+			const cells = row.cells;
+			const hex = cells[4].textContent.trim();
+			const phrase = cells[1].querySelector("code")?.textContent.trim() ?? "Color";
+			const fieldIndex = start + offsetIndex;
+
+			const dot = document.createElement("button");
+			dot.type = "button";
+			dot.className = "field-dot";
+			dot.style.setProperty("--color", hex);
+			dot.setAttribute("aria-label", `${phrase}, ${hex}`);
+			dot.addEventListener("click", () => {
+				selectBackdrop(hex);
+				burstColorField(fieldIndex);
+			});
+			fieldRow.append(dot);
+		});
+
+		grid.append(fieldRow);
+	}
+
+	colorField.replaceChildren(grid);
+	requestAnimationFrame(updateFieldDotPositions);
+}
+
 function setView(view) {
 	const showSwatches = view === "swatches";
+	const showField = view === "field";
 	if (showSwatches) refreshSwatchGrid();
-	if (tableWrap) tableWrap.hidden = showSwatches;
+	if (showField) refreshColorField();
+	if (tableWrap) tableWrap.hidden = showSwatches || showField;
 	if (swatchGrid) swatchGrid.hidden = !showSwatches;
+	if (colorField) colorField.hidden = !showField;
 	// Each library mode is its own destination: switch modes from the top.
 	window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
@@ -495,6 +680,7 @@ function sortRows(key) {
 	refreshSortHeaders(activeColorMode);
 	if (activeColorMode) refreshLightLabel(activeColorMode);
 	refreshSwatchGrid();
+	refreshColorField();
 }
 
 function clearBackdrop() {
@@ -554,6 +740,7 @@ function rememberManualOrder() {
 	refreshSortHeaders(colorModes[state.colorModeIndex]);
 	refreshLightLabel(colorModes[state.colorModeIndex]);
 	refreshSwatchGrid();
+	refreshColorField();
 }
 
 function settleDraggedRow() {
@@ -690,8 +877,14 @@ document.addEventListener("keydown", (event) => {
 	if (event.key === "Escape") clearBackdrop();
 });
 
+colorField?.addEventListener("pointermove", pullFieldDots);
+colorField?.addEventListener("pointerleave", () => pullFieldDots());
+window.addEventListener("resize", updateFieldDotPositions);
+window.addEventListener("scroll", updateFieldDotPositions, { passive: true });
+
 if (body) {
 	attachClassifications();
 	attachTooltipFollowers();
 	refreshSwatchGrid();
+	refreshColorField();
 }
