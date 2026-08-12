@@ -75,81 +75,61 @@ function playHeroWave() {
 	}
 
 	const paths = [...heroWave.children].filter((child) => child.tagName.toLowerCase() === "path");
-	const defs = heroWave.querySelector("defs");
-	const xmlns = "http://www.w3.org/2000/svg";
 	const animations = [
 		heroWave.animate(
 			[
-				{ opacity: 0 },
-				{ opacity: 1 },
+				{ opacity: 0, transform: "translate3d(-2.5vw, -1%, 0)" },
+				{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.12 },
+				{ opacity: 1, transform: "translate3d(0, 0, 0)", offset: 0.78 },
+				{ opacity: 0, transform: "translate3d(1vw, 0.5%, 0)" },
 			],
 			{
-				duration: 500,
-				easing: "ease-out",
+				duration: 6200,
+				easing: "cubic-bezier(0.22, 1, 0.36, 1)",
 				fill: "forwards",
 			},
 		),
 	];
 
 	paths.forEach((path, index) => {
-		const clone = path.cloneNode();
-		const length = clone.getTotalLength();
-		const mask = document.createElementNS(xmlns, "mask");
+		const lineOpacity = 0.7 + (index % 4) * 0.1;
+		const delay = index * 38;
 
-		clone.setAttribute("stroke-dasharray", "");
-		mask.setAttribute("id", `hero-wave-${index}`);
-		mask.append(clone);
-		defs.append(mask);
-		path.setAttribute("mask", `url(#hero-wave-${index})`);
-
-		clone.style.strokeDasharray = length;
-		clone.style.strokeDashoffset = length;
-
-		animations.push(
-			clone.animate(
-				[
-					{ strokeDashoffset: length },
-					{ strokeDashoffset: length * 3 },
-				],
-				{
-					delay: index * 35,
-					duration: 6500,
-					easing: "ease-in-out",
-					fill: "forwards",
-				},
-			),
-		);
+		path.style.opacity = 0;
 
 		animations.push(
 			path.animate(
 				[
-					{ strokeDashoffset: 0 },
-					{ strokeDashoffset: length * 0.4 },
+					{ opacity: 0 },
+					{ opacity: lineOpacity, offset: 0.28 },
+					{ opacity: lineOpacity },
 				],
 				{
-					delay: index * 35,
-					duration: 6500,
-					easing: "linear",
+					delay,
+					duration: 1600,
+					easing: "cubic-bezier(0.22, 1, 0.36, 1)",
 					fill: "forwards",
 				},
 			),
 		);
-	});
 
-	Promise.allSettled(animations.map((animation) => animation.finished))
-		.then(() => {
-			heroWave.animate(
-				[
-					{ opacity: 1 },
-					{ opacity: 0 },
-				],
-				{
-					duration: 1200,
-					easing: "ease-out",
-					fill: "forwards",
-				},
+		if (index % 3 === 0) {
+			animations.push(
+				path.animate(
+					[
+						{ strokeDashoffset: 72 },
+						{ strokeDashoffset: 0 },
+					],
+					{
+						delay,
+						duration: 4200,
+						easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+						fill: "forwards",
+					},
+				),
 			);
-		});
+		}
+	});
 }
 
 const assessmentCopy = {
