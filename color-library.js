@@ -15,24 +15,28 @@ const originalRowIndex = new Map(
 const colorModes = [
 	{
 		id: "bright",
+		headerLabel: "Vivid",
 		label: "Light: brightest to muted",
 		ariaSort: "descending",
 		direction: "descending",
 	},
 	{
 		id: "dim",
+		headerLabel: "Muted",
 		label: "Light: muted to brightest",
 		ariaSort: "ascending",
 		direction: "ascending",
 	},
 	{
 		id: "spectrum",
+		headerLabel: "Prism",
 		label: "Light: spectrum order",
 		ariaSort: "other",
 		direction: "ascending",
 	},
 	{
 		id: "creation",
+		headerLabel: "Order",
 		label: "Light: creation order",
 		ariaSort: "other",
 		direction: "ascending",
@@ -308,6 +312,11 @@ function refreshSortHeaders(activeColorMode = null) {
 	});
 }
 
+function refreshLightLabel(activeColorMode) {
+	const label = table?.querySelector('[data-sort="color"] .sort-label');
+	if (label && activeColorMode) label.textContent = activeColorMode.headerLabel;
+}
+
 function sortRows(key) {
 	let colorMode = null;
 	let activeColorMode = null;
@@ -340,6 +349,7 @@ function sortRows(key) {
 		.forEach(({ row }) => body.append(row));
 
 	refreshSortHeaders(activeColorMode);
+	if (activeColorMode) refreshLightLabel(activeColorMode);
 }
 
 function clearBackdrop() {
@@ -389,6 +399,7 @@ function rememberManualOrder() {
 	state.colorModeIndex = colorModes.findIndex(({ id }) => id === "creation");
 	state.direction = "ascending";
 	refreshSortHeaders(colorModes[state.colorModeIndex]);
+	refreshLightLabel(colorModes[state.colorModeIndex]);
 }
 
 function settleDraggedRow() {
