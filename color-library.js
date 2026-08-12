@@ -66,7 +66,8 @@ const swatchBreathLensFloor = 0.42;
 const swatchBreathMinDuration = 360;
 const swatchBreathMidDuration = 720;
 const swatchBreathMaxDuration = 1080;
-const heroWaveVariant = "welding-sparks";
+const heroWaveVariants = ["top-to-bottom", "left-to-right", "welding-sparks"];
+const heroWaveVariant = heroWaveVariants[Math.floor(Math.random() * heroWaveVariants.length)];
 
 function playHeroWave() {
 	if (!heroWave) return;
