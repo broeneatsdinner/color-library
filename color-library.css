@@ -240,28 +240,60 @@ h2 {
 }
 
 .view-toggle {
+	position: fixed;
+	bottom: 11svh;
+	left: 50%;
+	z-index: 12;
 	display: flex;
-	width: max-content;
-	margin: 34px auto 0;
+	box-sizing: border-box;
+	width: clamp(20rem, 50vw, 26rem);
+	height: 5rem;
+	max-width: calc(100vw - 28px);
 	padding: 5px;
 	border: 1px solid var(--line);
 	border-radius: 999px;
 	background: rgba(23, 29, 43, 0.72);
 	box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
 	backdrop-filter: blur(16px);
+	transform: translateX(-50%);
+	transform-origin: center;
+	transition:
+		bottom 700ms cubic-bezier(0.06, 0.58, 0.3, 1),
+		width 400ms cubic-bezier(0.06, 0.58, 0.3, 1),
+		height 400ms cubic-bezier(0.06, 0.58, 0.3, 1),
+		box-shadow 220ms ease,
+		background-color 220ms ease;
+	will-change: width, height, bottom;
+}
+
+.view-toggle.is-expanded {
+	bottom: 50%;
+	width: clamp(20rem, 75vw, 90rem);
+	height: clamp(10rem, 14vw, 15rem);
+	transform: translateX(-50%) translateY(50%);
 }
 
 .view-toggle-button {
+	flex: 1;
+	height: 100%;
 	border: 0;
 	border-radius: 999px;
-	padding: 10px 20px;
+	padding: 0 20px;
 	color: var(--muted);
 	background: transparent;
 	font-family: "DM Mono", monospace;
-	font-size: 0.72rem;
+	font-size: clamp(0.82rem, 1.1vw, 1rem);
 	letter-spacing: 0.06em;
 	cursor: pointer;
-	transition: color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+	transition:
+		color 180ms ease,
+		background-color 180ms ease,
+		box-shadow 180ms ease,
+		font-size 400ms cubic-bezier(0.06, 0.58, 0.3, 1);
+}
+
+.view-toggle.is-expanded .view-toggle-button {
+	font-size: clamp(1.35rem, 3.5vw, 2.65rem);
 }
 
 .view-toggle-button:hover,
@@ -278,6 +310,21 @@ h2 {
 	color: #111722;
 	background: var(--ink);
 	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.24);
+}
+
+.library-endcap {
+	min-height: 78svh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.view-toggle {
+		transform: translateX(-50%);
+		transition: none;
+	}
+
+	.view-toggle.is-expanded {
+		transform: translateX(-50%) translateY(50%);
+	}
 }
 
 table {
@@ -579,5 +626,18 @@ footer p {
 	.swatch-card__phrase {
 		margin-top: 30px;
 		font-size: 0.74rem;
+	}
+
+	.library-endcap {
+		min-height: 62svh;
+	}
+
+	.view-toggle.is-expanded {
+		width: min(90vw, 34rem);
+		height: 8rem;
+	}
+
+	.view-toggle.is-expanded .view-toggle-button {
+		font-size: clamp(1.15rem, 6vw, 1.6rem);
 	}
 }

@@ -4,6 +4,7 @@ const headers = [...(table?.querySelectorAll("th") ?? [])];
 const tableWrap = document.querySelector(".table-wrap");
 const swatchGrid = document.querySelector(".swatch-grid");
 const viewButtons = [...document.querySelectorAll("[data-view]")];
+const viewToggle = document.querySelector(".view-toggle");
 
 const state = {
 	key: null,
@@ -442,12 +443,22 @@ function setView(view) {
 	if (showSwatches) refreshSwatchGrid();
 	if (tableWrap) tableWrap.hidden = showSwatches;
 	if (swatchGrid) swatchGrid.hidden = !showSwatches;
+	// Each library mode is its own destination: switch modes from the top.
+	window.scrollTo({ top: 0, left: 0, behavior: "auto" });
 
 	viewButtons.forEach((button) => {
 		const isActive = button.dataset.view === view;
 		button.classList.toggle("is-active", isActive);
 		button.setAttribute("aria-pressed", String(isActive));
 	});
+
+	requestAnimationFrame(updateViewToggleState);
+}
+
+function updateViewToggleState() {
+	if (!viewToggle) return;
+	const remaining = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+	viewToggle.classList.toggle("is-expanded", remaining < 160);
 }
 
 function sortRows(key) {
@@ -519,6 +530,10 @@ table?.querySelectorAll("[data-sort]").forEach((button) => {
 viewButtons.forEach((button) => {
 	button.addEventListener("click", () => setView(button.dataset.view));
 });
+
+window.addEventListener("scroll", updateViewToggleState, { passive: true });
+window.addEventListener("resize", updateViewToggleState);
+updateViewToggleState();
 
 let draggedRow = null;
 let dragPointerId = null;
