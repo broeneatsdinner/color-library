@@ -441,6 +441,7 @@ function refreshSwatchGrid() {
 }
 
 const fieldPullDistance = 210;
+const fieldPullStrength = 0.38;
 const fieldBurstDuration = 2200;
 const fieldBurstStagger = 300;
 let fieldBurstActive = false;
@@ -471,13 +472,13 @@ function pullFieldDots(event) {
 		const distance = Math.hypot(differenceX, differenceY);
 
 		if (distance < fieldPullDistance) {
-			const percent = distance / fieldPullDistance;
-			dot.dataset.pulled = "true";
-			dot.classList.remove("is-returning");
-			dot.style.setProperty("--field-x", `${differenceX * percent}px`);
-			dot.style.setProperty("--field-y", `${differenceY * percent}px`);
-			return;
-		}
+				const percent = distance / fieldPullDistance;
+				dot.dataset.pulled = "true";
+				dot.classList.remove("is-returning");
+				dot.style.setProperty("--field-x", `${differenceX * percent * fieldPullStrength}px`);
+				dot.style.setProperty("--field-y", `${differenceY * percent * fieldPullStrength}px`);
+				return;
+			}
 
 		if (dot.dataset.pulled !== "true") return;
 

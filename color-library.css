@@ -203,16 +203,18 @@ h2 {
 	will-change: transform;
 }
 
-.field-dot[data-pulled="true"] {
-	transition-duration: 420ms, 200ms;
-	transition-timing-function: cubic-bezier(0.16, 1.8, 0.28, 1), ease;
-}
-
 .field-dot:hover,
 .field-dot:focus-visible {
 	z-index: 1;
 	--field-scale: 1.3;
 	box-shadow: 0 0 34px color-mix(in srgb, var(--color), transparent 35%);
+}
+
+.field-dot[data-pulled="true"] {
+	z-index: 2;
+	--field-scale: 2;
+	transition-duration: 420ms, 200ms;
+	transition-timing-function: cubic-bezier(0.16, 1.8, 0.28, 1), ease;
 }
 
 .field-dot:focus-visible {
