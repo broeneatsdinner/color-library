@@ -730,6 +730,7 @@ function setView(view) {
 function updateViewToggleState() {
 	if (!viewToggle) return;
 	const remaining = document.documentElement.scrollHeight - window.innerHeight - window.scrollY;
+	viewToggle.classList.toggle("is-visible", window.scrollY > window.innerHeight * 0.4);
 	viewToggle.classList.toggle("is-expanded", remaining < 160);
 }
 
