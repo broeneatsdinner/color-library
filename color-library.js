@@ -60,7 +60,7 @@ let swatchTouchY = null;
 let swatchBreathScrollY = window.scrollY;
 let swatchBreathRows = [];
 const swatchBreathDirection = 1;
-const swatchBreathMaxSpacing = 58;
+const swatchBreathMaxSpacing = 52;
 
 function playHeroWave() {
 	if (!heroWave) return;
@@ -576,7 +576,7 @@ function updateSwatchBreathing() {
 		return;
 	}
 
-	swatchBreathPower *= 0.84;
+	swatchBreathPower *= 0.92;
 
 	if (swatchBreathPower < 0.015) {
 		resetSwatchBreathing();
