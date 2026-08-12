@@ -193,16 +193,95 @@ function createAssessment(classification, hex) {
 function attachClassifications() {
 	[...body.rows].forEach((row) => {
 		const phraseCell = row.cells[1];
-		const phrase = phraseCell.textContent.trim().toLocaleLowerCase();
+		const phrase = phraseCell.querySelector("code")?.textContent.trim().toLocaleLowerCase() ?? "";
 		const tooltip = formatClassification(classifyPhrase(phrase));
-		const hex = row.cells[4].textContent.trim();
 
-		phraseCell.append(createAssessment(classifyPhrase(phrase), hex));
 		phraseCell.setAttribute(
 			"aria-label",
 			`${phrase}. Color assessment: ${tooltip.replaceAll("\n", ". ")}.`,
 		);
 	});
+}
+
+const assessmentFollower = document.createElement("div");
+assessmentFollower.className = "color-assessment-follower";
+assessmentFollower.setAttribute("aria-hidden", "true");
+document.body.append(assessmentFollower);
+
+let tooltipFrame = null;
+let tooltipCurrent = null;
+let tooltipTarget = null;
+let activePhraseCell = null;
+
+function hideTooltipFollower() {
+	activePhraseCell = null;
+	tooltipCurrent = null;
+	tooltipTarget = null;
+	assessmentFollower.classList.remove("is-visible");
+	if (tooltipFrame) cancelAnimationFrame(tooltipFrame);
+	tooltipFrame = null;
+}
+
+function paintTooltipPosition() {
+	if (!activePhraseCell || !tooltipCurrent || !tooltipTarget) return;
+
+	tooltipCurrent.x += (tooltipTarget.x - tooltipCurrent.x) * 0.16;
+	tooltipCurrent.y += (tooltipTarget.y - tooltipCurrent.y) * 0.16;
+	assessmentFollower.style.setProperty("--tooltip-x", `${tooltipCurrent.x}px`);
+	assessmentFollower.style.setProperty("--tooltip-y", `${tooltipCurrent.y}px`);
+
+	if (
+		Math.abs(tooltipTarget.x - tooltipCurrent.x) > 0.25
+		|| Math.abs(tooltipTarget.y - tooltipCurrent.y) > 0.25
+	) {
+		tooltipFrame = requestAnimationFrame(paintTooltipPosition);
+		return;
+	}
+
+	tooltipCurrent = { ...tooltipTarget };
+	tooltipFrame = null;
+}
+
+function followTooltip(cell, event) {
+	const phrase = cell.querySelector("code")?.textContent.trim().toLocaleLowerCase() ?? "";
+	const hex = cell.closest("tr")?.cells[4].textContent.trim() ?? "#9eb4d5";
+
+	if (activePhraseCell !== cell) {
+		assessmentFollower.replaceChildren(
+			createAssessment(classifyPhrase(phrase), hex),
+		);
+		assessmentFollower.style.setProperty("--assessment-color", hex);
+		assessmentFollower.classList.add("is-visible");
+		activePhraseCell = cell;
+	}
+
+	const target = {
+		x: event.clientX + 22,
+		y: event.clientY - 36,
+	};
+
+	tooltipTarget = target;
+	if (!tooltipCurrent) tooltipCurrent = { ...target };
+
+	if (!tooltipFrame) tooltipFrame = requestAnimationFrame(paintTooltipPosition);
+}
+
+function attachTooltipFollowers() {
+	body.addEventListener("pointermove", (event) => {
+		if (event.pointerType !== "mouse") return;
+
+		const phraseCell = document
+			.elementFromPoint(event.clientX, event.clientY)
+			?.closest("td:nth-child(2)");
+		if (!phraseCell || !body.contains(phraseCell)) {
+			hideTooltipFollower();
+			return;
+		}
+
+		followTooltip(phraseCell, event);
+	});
+
+	body.addEventListener("pointerleave", hideTooltipFollower);
 }
 
 function hexToHsv(hex) {
@@ -598,5 +677,6 @@ document.addEventListener("keydown", (event) => {
 
 if (body) {
 	attachClassifications();
+	attachTooltipFollowers();
 	refreshSwatchGrid();
 }

@@ -429,10 +429,10 @@ td:nth-child(2) {
 	font-weight: 600;
 }
 
-td:nth-child(2) .color-assessment {
-	position: absolute;
-	top: -18px;
-	left: 20ch;
+.color-assessment-follower {
+	position: fixed;
+	top: var(--tooltip-y, -18px);
+	left: var(--tooltip-x, 20ch);
 	z-index: 4;
 	box-sizing: border-box;
 	display: block;
@@ -458,16 +458,16 @@ td:nth-child(2) .color-assessment {
 	white-space: nowrap;
 }
 
-td:nth-child(2) .color-assessment span {
+.color-assessment-follower span {
 	display: block;
 }
 
-td:nth-child(2) .color-assessment strong {
+.color-assessment-follower strong {
 	color: var(--assessment-color);
 	font-weight: 700;
 }
 
-tbody tr:hover td:nth-child(2) .color-assessment {
+.color-assessment-follower.is-visible {
 	opacity: 1;
 	transform: translateY(0) scale(1);
 	animation: bubblegum-pop 230ms cubic-bezier(0.87, 0, 0.13, 1) both;
@@ -491,11 +491,11 @@ tbody tr:hover td:nth-child(2) .color-assessment {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	td:nth-child(2) .color-assessment {
+	.color-assessment-follower {
 		transition: none;
 	}
 
-	tbody tr:hover td:nth-child(2) .color-assessment {
+	.color-assessment-follower.is-visible {
 		animation: none;
 	}
 
