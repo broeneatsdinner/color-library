@@ -813,6 +813,7 @@ const fieldPullStrength = 0.38;
 const fieldBurstDuration = 2200;
 const fieldBurstStagger = 300;
 let fieldBurstActive = false;
+let fieldPointer = null;
 
 function updateFieldDotPositions() {
 	if (!colorField) return;
@@ -827,10 +828,19 @@ function updateFieldDotPositions() {
 }
 
 function pullFieldDots(event) {
-	if (!colorField || colorField.hidden || fieldBurstActive) return;
+	if (!colorField || colorField.hidden) return;
 
-	const pointerX = event?.clientX ?? -fieldPullDistance;
-	const pointerY = event?.clientY ?? -fieldPullDistance;
+	if (event) {
+		fieldPointer = {
+			x: event.clientX,
+			y: event.clientY,
+		};
+	}
+
+	if (fieldBurstActive) return;
+
+	const pointerX = fieldPointer?.x ?? -fieldPullDistance;
+	const pointerY = fieldPointer?.y ?? -fieldPullDistance;
 
 	colorField.querySelectorAll(".field-dot").forEach((dot) => {
 		if (!dot.fieldCenter) return;
@@ -942,6 +952,7 @@ function burstColorField(originIndex) {
 
 	Promise.allSettled(animations.map((animation) => animation.finished))
 		.then(() => {
+			animations.forEach((animation) => animation.cancel());
 			dots.forEach((dot) => dot.classList.remove("is-bursting"));
 			fieldBurstActive = false;
 			updateFieldDotPositions();
@@ -986,7 +997,10 @@ function refreshColorField() {
 	}
 
 	colorField.replaceChildren(grid);
-	requestAnimationFrame(updateFieldDotPositions);
+	requestAnimationFrame(() => {
+		updateFieldDotPositions();
+		pullFieldDots();
+	});
 }
 
 function setView(view) {
@@ -1312,7 +1326,10 @@ document.addEventListener("keydown", (event) => {
 });
 
 colorField?.addEventListener("pointermove", pullFieldDots);
-colorField?.addEventListener("pointerleave", () => pullFieldDots());
+colorField?.addEventListener("pointerleave", () => {
+	fieldPointer = null;
+	pullFieldDots();
+});
 window.addEventListener("resize", updateFieldDotPositions);
 window.addEventListener("scroll", updateFieldDotPositions, { passive: true });
 
